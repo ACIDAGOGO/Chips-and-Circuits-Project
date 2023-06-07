@@ -1,6 +1,7 @@
 import csv
 from gate import Gate
 import numpy as np
+import matplotlib.pyplot as plt
 from typing import Any
 
 class Chip:
@@ -35,6 +36,19 @@ class Chip:
         grid = np.flipud(grid)
         return grid
 
+    def visualize_grid(self) -> None:
+        fig, ax = plt.subplots()
+
+        # Define colormap
+        cmap = plt.cm.gray
+        cmap.set_under('red')
+        ax.imshow(self.grid, cmap=cmap, vmin = 0.01)
+        
+        ax.set_xticks(range(self.grid_x))
+        ax.set_yticks(range(self.grid_y))
+        ax.grid(True, color='white', linewidth=0.5)
+
+        plt.show()
 
     # Loads all gates from CSV into memory
     def load_gates(self, filename: str) -> None:
@@ -54,8 +68,9 @@ class Chip:
 
 if __name__ == "__main__":
 
-    chip = Chip(0, "netlist_1.csv")
+    chip = Chip(2, "netlist_1.csv")
     for gate in chip.gates.values():
         print(gate)
 
     print(chip.grid)
+    chip.visualize_grid()
