@@ -66,7 +66,7 @@ class Chip:
                 new_gate = Gate(int(row[0]), int(row[1]), int(row[2]))
                 self.gates[row[0]] = new_gate
 
-    
+    # Loads all gates from CSV into memory
     def load_connections(self, filename: str) -> None:
          with open(filename) as file:
             netlist = csv.reader(file)
