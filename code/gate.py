@@ -17,8 +17,8 @@ class Gate:
     def add_destinations(self, gate: 'Gate') -> None:
         self.destinations.append(gate)
 
-    def get_destinations(self, gate: 'Gate') -> list['Gate']:
+    def get_destinations(self) -> list['Gate']:
         return self.destinations
 
     def __repr__(self) -> str:
-        return f"ID: {self.id}, X: {self.x}, Y: {self.y}"
+        return f"GATE {self.id}"
