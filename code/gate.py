@@ -14,6 +14,9 @@ class Gate:
     def get_y(self) -> int:
         return self.y
 
+    def get_coords(self) -> tuple[int, int]:
+        return (self.x, self.y)
+
     def add_destinations(self, gate: 'Gate') -> None:
         self.destinations.append(gate)
 

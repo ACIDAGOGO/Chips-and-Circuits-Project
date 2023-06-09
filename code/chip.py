@@ -1,5 +1,7 @@
 import csv
 from gate import Gate
+from wire import Wire
+from random import run
 import numpy as np
 import matplotlib.pyplot as plt
 from typing import Any
@@ -26,6 +28,10 @@ class Chip:
         elif self.chip_no == 2:
             self.grid_x = 18
             self.grid_y = 17
+    
+    def get_grid_upperbounds(self) -> tuple[int, int]:
+        return (self.grid_x, self.grid_y)
+
 
     # Create grid in 2d array
     def initialize_grid(self) -> Any:
@@ -34,8 +40,10 @@ class Chip:
         for gate in self.gates.values():
             grid[gate.get_y(), gate.get_x()] = gate.get_id()
         
-        grid = np.flipud(grid)
+        #grid = np.flipud(grid)
         return grid
+    
+
 
     def visualize_grid(self) -> None:
         fig, ax = plt.subplots()
@@ -84,15 +92,28 @@ class Chip:
                 # Add destination gate to origin gate's destination list
                 origin_gate.add_destinations(destination_gate)
 
-                
+    # Pleur in grid class
+    def check_for_illegal_gate(self, position: tuple[int, int], father: 'Gate') -> bool:
+        if self.grid[position[1]][position[0]] == father.get_id():
+            return False
+        elif self.grid[position[1]][position[0]] > 0:
+            return True
+        
+        return False
 
 
 if __name__ == "__main__":
 
     chip = Chip(0, "netlist_1.csv")
-    for gate in chip.gates.values():
+    for mother in chip.gates.values():
+        for father in gate.get_destinations():
+            new_wire = Wire(mother, father)
+            run(new_wire, chip)
+            
+
         print(gate)
         print(f'CONNECTIONS: {gate.get_destinations()}')
+
 
     print(chip.grid)
     chip.visualize_grid()
