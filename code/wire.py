@@ -13,6 +13,9 @@ class Wire:
     def pop_unit(self) -> tuple[int, int]:
         return self.path.pop()
 
+    def reset_path(self) -> None:
+        self.path = [self.start_position]
+
     def get_path(self) -> list[tuple[int, int]]:
         return self.path
     
@@ -22,7 +25,11 @@ class Wire:
 
     def get_previous_position(self) -> tuple[int, int]:
         wire_length = len(self.path)
-        return self.path[wire_length - 2]
+
+        if (wire_length > 1):
+            return self.path[wire_length - 2]
+        
+        return self.get_current_position()
     
     def check_for_father(self) -> bool:
         if self.get_current_position() == self.father.get_coords():

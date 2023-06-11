@@ -1,63 +1,28 @@
 import csv
 from gate import Gate
 from wire import Wire
-from random import run
-import numpy as np
-import matplotlib.pyplot as plt
+from random_alg import run
 from typing import Any
+from grid import Grid
+
 
 class Chip:
     def __init__(self, chip_no: int, netlist_name: str):
         self.chip_no = chip_no
         self.netlist_name = netlist_name
-        self.grid_x: int
-        self.grid_y: int
+        self.grid = Grid(chip_no)
         self.gates: dict[str, 'Gate'] = {}
         self.load_gates(f"../gates&netlists/chip_{chip_no}/print_{chip_no}.csv")
         self.load_connections(f"../gates&netlists/chip_{chip_no}/{netlist_name}")
-        self.grid = self.initialize_grid()
-
-    # Set the grid size to the right aspect ratio
-    def get_grid_size(self) -> None:
-        if self.chip_no == 0:
-            self.grid_x = 8
-            self.grid_y = 7
-        elif self.chip_no == 1:
-            self.grid_x = 18
-            self.grid_y = 13
-        elif self.chip_no == 2:
-            self.grid_x = 18
-            self.grid_y = 17
-    
-    def get_grid_upperbounds(self) -> tuple[int, int]:
-        return (self.grid_x, self.grid_y)
-
+        self.fill_grid()
+        self.wires: list['Wire'] = []
+        
 
     # Create grid in 2d array
-    def initialize_grid(self) -> Any:
-        self.get_grid_size()
-        grid = np.zeros((self.grid_y, self.grid_x))
+    def fill_grid(self) -> None:
         for gate in self.gates.values():
-            grid[gate.get_y(), gate.get_x()] = gate.get_id()
-        
-        #grid = np.flipud(grid)
-        return grid
-    
+            self.grid.values[gate.get_y(), gate.get_x()] = gate.get_id()
 
-
-    def visualize_grid(self) -> None:
-        fig, ax = plt.subplots()
-
-        # Define colormap
-        cmap = plt.cm.gray
-        cmap.set_under('red')
-        ax.imshow(self.grid, cmap=cmap, vmin = 0.01)
-        
-        ax.set_xticks(range(self.grid_x))
-        ax.set_yticks(range(self.grid_y))
-        ax.grid(True, color='white', linewidth=0.5)
-
-        plt.show()
 
     # Loads all gates from CSV into memory
     def load_gates(self, filename: str) -> None:
@@ -92,28 +57,70 @@ class Chip:
                 # Add destination gate to origin gate's destination list
                 origin_gate.add_destinations(destination_gate)
 
-    # Pleur in grid class
-    def check_for_illegal_gate(self, position: tuple[int, int], father: 'Gate') -> bool:
-        if self.grid[position[1]][position[0]] == father.get_id():
-            return False
-        elif self.grid[position[1]][position[0]] > 0:
-            return True
-        
-        return False
+    # Adds wire to list of wires on the chip
+    def add_wire(self, wire: 'Wire') -> None:
+        self.wires.append(wire)
+
+    # Calculates total cost of chip
+    def calculate_costs(self) -> int:
+        cost = 0
+
+        # Loop through grid
+        for row in self.grid.values:
+            for value in row:
+                if value < -1:
+                    intersections = abs(value) - 1
+                else:
+                    intersections = 0
+                
+                cost += 1 * abs(value) + 300 * intersections
+
+        # Add 1 per wire, because in the grid, a wire on top of a father gate is not represented
+        cost += len(self.wires)
+
+        return int(cost)
+
 
 
 if __name__ == "__main__":
 
-    chip = Chip(0, "netlist_1.csv")
-    for mother in chip.gates.values():
-        for father in gate.get_destinations():
-            new_wire = Wire(mother, father)
-            run(new_wire, chip)
-            
+    total_costs = 10000
 
+    while (total_costs > 1000):
+        chip = Chip(0, "netlist_1.csv")
+
+        for mother in chip.gates.values():
+            for father in mother.get_destinations():
+                new_wire = Wire(mother, father)
+                chip.add_wire(new_wire)
+                # print(f'WIRE ORIGIN: {new_wire.mother.get_id()} DESTINATION: {new_wire.father.get_id()}')
+                run(new_wire, chip.grid)
+
+                # Reset wire and its path on the grid and find new path until wire has found father
+                while (new_wire.get_current_position() != new_wire.father.get_coords()):
+
+                    # Trace back wire
+                    for unit in range(len(new_wire.get_path()) - 1):
+                        coords = new_wire.pop_unit()
+
+                        # Reset grid on traced back route
+                        chip.grid.values[coords[1]][coords[0]] += 1
+
+                    # Start a new wire
+                    run(new_wire, chip.grid)
+        
+        total_costs = chip.calculate_costs()
+        print(f'TOTAL COSTS: ${total_costs}')
+
+    for gate in chip.gates.values():
         print(gate)
         print(f'CONNECTIONS: {gate.get_destinations()}')
 
+    print(chip.grid.values)
+    chip.grid.visualize_grid()
 
-    print(chip.grid)
-    chip.visualize_grid()
+    for wire in chip.wires:
+        if wire.get_current_position() == wire.father.get_coords():
+            print(f'WIRE {wire.mother.get_id()} FOUND FATHER')
+        else:
+            print(f'WIRE {wire.mother.get_id()} DID NOT FIND FATHER')
