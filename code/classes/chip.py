@@ -14,8 +14,8 @@ class Chip:
         self.netlist_name = netlist_name
         self.grid = Grid(chip_no)
         self.gates: dict[str, 'Gate'] = {}
-        self.load_gates(f"../../gates&netlists/chip_{chip_no}/print_{chip_no}.csv")
-        self.load_connections(f"../../gates&netlists/chip_{chip_no}/{netlist_name}")
+        self.load_gates(f"../../data/chip_{chip_no}/print_{chip_no}.csv")
+        self.load_connections(f"../../data/chip_{chip_no}/{netlist_name}")
         self.fill_grid()
         self.wires: list['Wire'] = []
         
