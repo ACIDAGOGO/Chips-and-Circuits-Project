@@ -69,10 +69,10 @@ def run_random() -> None:
     costs_list: list[int] = []
 
     global iteration_counter
-    total_costs = 100
+    total_costs = 0
 
 
-    while (iteration_counter < 100):
+    while (iteration_counter < 10000):
         iteration_counter += 1
         chip = Chip(0, "netlist_1.csv")
 
@@ -116,7 +116,9 @@ def run_random() -> None:
     #     else:
     #         print(f'WIRE {wire.mother.get_id()} DID NOT FIND FATHER')
 
-
-    plt.hist(total_costs, 21)
+    binsi = list(range(0, max(costs_list) + 1000, 1000))
+    print(f'cost_list: {costs_list}')
+    print(f'bins: {binsi}')
+    plt.hist(costs_list, bins=binsi)
     plt.show()
 
