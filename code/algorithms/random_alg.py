@@ -10,14 +10,14 @@ max_tries: int = 1000
 counter: int = 0
 tries_counter: int = 0
 
-def is_move_valid(wire: 'Wire', grid: 'Grid', desired_position: tuple[int, int]) -> bool:
+def is_move_valid(wire: 'Wire', grid: 'Grid', desired_position: tuple[int, int, int]) -> bool:
     global counter
     global tries_counter
 
     previous_position = wire.get_previous_position()
     grid_upperbounds = grid.get_grid_size()
 
-    if desired_position[0] > grid_upperbounds[0] or desired_position[1] > grid_upperbounds[1] or desired_position[0] < 0 or desired_position[1] < 0:
+    if desired_position[0] > grid_upperbounds[0] or desired_position[1] > grid_upperbounds[1] or desired_position[2] > grid_upperbounds[2] or desired_position[0] < 0 or desired_position[1] < 0 or desired_position[2] < 0:
             counter += 1
             tries_counter += 1
             return False
@@ -40,12 +40,13 @@ def is_move_valid(wire: 'Wire', grid: 'Grid', desired_position: tuple[int, int])
         counter = 0
         return True
 
-def get_random_direction(wire: 'Wire') -> tuple[int, int]:
+def get_random_direction(wire: 'Wire') -> tuple[int, int, int]:
     current_position = wire.get_current_position()
     current_position_x = current_position[0]
     current_position_y = current_position[1]
+    current_position_z = current_position[2]
 
-    possible_directions: list[tuple[int, int]] = [(current_position_x + 1, current_position_y), (current_position_x - 1, current_position_y), (current_position_x, current_position_y + 1), (current_position_x, current_position_y - 1)]
+    possible_directions: list[tuple[int, int, int]] = [(current_position_x + 1, current_position_y, current_position_z), (current_position_x - 1, current_position_y, current_position_z), (current_position_x, current_position_y + 1, current_position_z), (current_position_x, current_position_y - 1, current_position_z), (current_position_x, current_position_y, current_position_z + 1), (current_position_x, current_position_y, current_position_z - 1)]
 
     random_direction: tuple[int, int] = random.choice(possible_directions)
 
@@ -60,7 +61,7 @@ def lay_wire(wire: 'Wire', grid: 'Grid') -> None:
         if (is_move_valid(wire, grid, random_direction)):
             wire.add_unit(random_direction)
             if (random_direction != wire.father.get_coords()):
-                grid.values[random_direction[1]][random_direction[0]] -= 1
+                grid.values[random_direction[2]][random_direction[1]][random_direction[0]] -= 1
 
 def run_random() -> None:
     total_costs = 10000
@@ -83,7 +84,7 @@ def run_random() -> None:
                         coords = new_wire.pop_unit()
 
                         # Reset grid on traced back route
-                        chip.grid.values[coords[1]][coords[0]] += 1
+                        chip.grid.values[coords[2]][coords[1]][coords[0]] += 1
 
                     # Start a new wire
                     lay_wire(new_wire, chip.grid)
@@ -103,8 +104,4 @@ def run_random() -> None:
             print(f'WIRE {wire.mother.get_id()} FOUND FATHER')
         else:
             print(f'WIRE {wire.mother.get_id()} DID NOT FIND FATHER')
-
-if __name__ == "__main__":
-    run_random()
-
 
