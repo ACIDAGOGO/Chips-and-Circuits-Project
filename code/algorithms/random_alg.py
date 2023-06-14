@@ -2,6 +2,7 @@ import sys
 sys.path.append("../classes")
 
 import random
+import matplotlib.pyplot as plt
 from grid import Grid
 from wire import Wire
 from chip import Chip
@@ -9,6 +10,7 @@ from chip import Chip
 max_tries: int = 1000
 counter: int = 0
 tries_counter: int = 0
+iteration_counter: int = 0
 
 def is_move_valid(wire: 'Wire', grid: 'Grid', desired_position: tuple[int, int, int]) -> bool:
     global counter
@@ -64,9 +66,14 @@ def lay_wire(wire: 'Wire', grid: 'Grid') -> None:
                 grid.values[random_direction[2]][random_direction[1]][random_direction[0]] -= 1
 
 def run_random() -> None:
-    total_costs = 10000
+    costs_list: list[int] = []
 
-    while (total_costs > 1000):
+    global iteration_counter
+    total_costs = 100
+
+
+    while (iteration_counter < 100):
+        iteration_counter += 1
         chip = Chip(0, "netlist_1.csv")
 
         for mother in chip.gates.values():
@@ -90,18 +97,26 @@ def run_random() -> None:
                     lay_wire(new_wire, chip.grid)
         
         total_costs = chip.calculate_costs()
-        print(f'TOTAL COSTS: ${total_costs}')
+        costs_list.append(total_costs)
 
-    for gate in chip.gates.values():
-        print(gate)
-        print(f'CONNECTIONS: {gate.get_destinations()}')
 
-    print(chip.grid.values)
-    chip.grid.visualize_grid()
+        #print(f'TOTAL COSTS: ${total_costs}')
+        print(iteration_counter)
 
-    for wire in chip.wires:
-        if wire.get_current_position() == wire.father.get_coords():
-            print(f'WIRE {wire.mother.get_id()} FOUND FATHER')
-        else:
-            print(f'WIRE {wire.mother.get_id()} DID NOT FIND FATHER')
+    # for gate in chip.gates.values():
+    #     print(gate)
+    #     print(f'CONNECTIONS: {gate.get_destinations()}')
+
+    # print(chip.grid.values)
+    # chip.grid.visualize_grid()
+
+    # for wire in chip.wires:
+    #     if wire.get_current_position() == wire.father.get_coords():
+    #         print(f'WIRE {wire.mother.get_id()} FOUND FATHER')
+    #     else:
+    #         print(f'WIRE {wire.mother.get_id()} DID NOT FIND FATHER')
+
+
+    plt.hist(total_costs, 21)
+    plt.show()
 
