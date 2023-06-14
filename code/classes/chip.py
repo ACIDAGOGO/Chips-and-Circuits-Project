@@ -1,9 +1,6 @@
 import csv
-import sys
-sys.path.append("../algorithms")
 from gate import Gate
 from wire import Wire
-#from random_alg import run
 from typing import Any
 from grid import Grid
 
@@ -81,48 +78,3 @@ class Chip:
         cost += len(self.wires)
 
         return int(cost)
-
-
-
-# if __name__ == "__main__":
-
-#     total_costs = 10000
-
-#     while (total_costs > 1000):
-#         chip = Chip(0, "netlist_1.csv")
-
-#         for mother in chip.gates.values():
-#             for father in mother.get_destinations():
-#                 new_wire = Wire(mother, father)
-#                 chip.add_wire(new_wire)
-#                 # print(f'WIRE ORIGIN: {new_wire.mother.get_id()} DESTINATION: {new_wire.father.get_id()}')
-#                 run(new_wire, chip.grid)
-
-#                 # Reset wire and its path on the grid and find new path until wire has found father
-#                 while (new_wire.get_current_position() != new_wire.father.get_coords()):
-
-#                     # Trace back wire
-#                     for unit in range(len(new_wire.get_path()) - 1):
-#                         coords = new_wire.pop_unit()
-
-#                         # Reset grid on traced back route
-#                         chip.grid.values[coords[1]][coords[0]] += 1
-
-#                     # Start a new wire
-#                     run(new_wire, chip.grid)
-        
-#         total_costs = chip.calculate_costs()
-#         print(f'TOTAL COSTS: ${total_costs}')
-
-#     for gate in chip.gates.values():
-#         print(gate)
-#         print(f'CONNECTIONS: {gate.get_destinations()}')
-
-#     print(chip.grid.values)
-#     chip.grid.visualize_grid()
-
-#     for wire in chip.wires:
-#         if wire.get_current_position() == wire.father.get_coords():
-#             print(f'WIRE {wire.mother.get_id()} FOUND FATHER')
-#         else:
-#             print(f'WIRE {wire.mother.get_id()} DID NOT FIND FATHER')
