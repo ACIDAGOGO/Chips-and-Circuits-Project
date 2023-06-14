@@ -72,7 +72,11 @@ def run_random() -> None:
     total_costs = 0
 
 
+<<<<<<< HEAD
     while (iteration_counter < 100):
+=======
+    while (iteration_counter < 2):
+>>>>>>> d751f9f34776a7786e3fdbe815808e5b2af5ffc7
         iteration_counter += 1
         chip = Chip(0, "netlist_1.csv")
 
@@ -103,22 +107,24 @@ def run_random() -> None:
         #print(f'TOTAL COSTS: ${total_costs}')
         print(iteration_counter)
 
-    # for gate in chip.gates.values():
-    #     print(gate)
-    #     print(f'CONNECTIONS: {gate.get_destinations()}')
+    for gate in chip.gates.values():
+        print(gate)
+        print(f'CONNECTIONS: {gate.get_destinations()}')
 
-    # print(chip.grid.values)
-    # chip.grid.visualize_grid()
+    print(f'GRID VALUES: {chip.grid.values}')
 
-    # for wire in chip.wires:
-    #     if wire.get_current_position() == wire.father.get_coords():
-    #         print(f'WIRE {wire.mother.get_id()} FOUND FATHER')
-    #     else:
-    #         print(f'WIRE {wire.mother.get_id()} DID NOT FIND FATHER')
+    for wire in chip.wires:
+        if wire.get_current_position() == wire.father.get_coords():
+            print(f'WIRE {wire.mother.get_id()} FOUND FATHER')
+        else:
+            print(f'WIRE {wire.mother.get_id()} DID NOT FIND FATHER')
 
-    binsi = list(range(0, max(costs_list) + 1000, 1000))
-    print(f'cost_list: {costs_list}')
-    print(f'bins: {binsi}')
-    plt.hist(costs_list, bins=binsi)
-    plt.show()
+    # HISTOGRAM
+    # binsi = list(range(0, max(costs_list) + 1000, 1000))
+    # print(f'cost_list: {costs_list}')
+    # print(f'bins: {binsi}')
+    # plt.hist(costs_list, bins=binsi)
+    # plt.show()
+    
+    return chip
 
