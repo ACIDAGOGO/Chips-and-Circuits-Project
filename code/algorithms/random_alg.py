@@ -27,11 +27,7 @@ def is_move_valid(wire: 'Wire', grid: 'Grid', desired_position: tuple[int, int, 
 
     foreign_gate: bool = grid.check_for_illegal_gate(desired_position, wire.father)
 
-    if desired_position == previous_position:
-        counter += 1
-        tries_counter += 1
-        return False
-    elif desired_position in wire.path:
+    if desired_position in wire.path:
         counter += 1
         tries_counter += 1
         return False
@@ -78,10 +74,10 @@ def random_reassign_wire(new_wire: "Wire", grid: "Grid"):
     lay_wire(new_wire, grid)
 
 def run_random(chip_no: int, netlist_no: int, output_filename: str) -> 'Chip':
-    costs_list: list[int] = []
-    total_costs = 0
+    iteration = 0
 
     while (True):
+
         chip = Chip(chip_no, f"netlist_{netlist_no}.csv")
 
         for mother in chip.gates.values():
@@ -95,33 +91,18 @@ def run_random(chip_no: int, netlist_no: int, output_filename: str) -> 'Chip':
                 while (new_wire.get_current_position() != new_wire.father.get_coords()):
                     random_reassign_wire(new_wire, chip.grid)
 
-                   
-        
+        # Calculate total cost of chip       
         total_costs = chip.calculate_costs()
-        costs_list.append(total_costs)
-        print(total_costs)
 
-        # Save chipset to json file
+        # DEBUG
+        print(f'COST:{total_costs}')
+
+        # Count chip iteration number
+        chip.iteration = iteration
+        iteration += 1
+
+        # Save relevant chip data to file
         save_to_file(chip, output_filename)
-        
-    for gate in chip.gates.values():
-        print(gate)
-        print(f'CONNECTIONS: {gate.get_destinations()}')
 
-    print(f'GRID VALUES: {chip.grid.values}')
-
-    for wire in chip.wires:
-        if wire.get_current_position() == wire.father.get_coords():
-            print(f'WIRE {wire.mother.get_id()} FOUND FATHER')
-        else:
-            print(f'WIRE {wire.mother.get_id()} DID NOT FIND FATHER')
-
-    # HISTOGRAM
-    # binsi = list(range(0, max(costs_list) + 1000, 1000))
-    # print(f'cost_list: {costs_list}')
-    # print(f'bins: {binsi}')
-    # plt.hist(costs_list, bins=binsi)
-    # plt.show()
-    
     return chip
 
