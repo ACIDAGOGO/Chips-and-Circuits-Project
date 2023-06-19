@@ -9,5 +9,5 @@ import random_alg
 if __name__ == "__main__":
     
     # Run random algorithm
-    chip = random_alg.run_random()
+    chip = random_alg.run_random(0, 1)
     visualise(chip)

@@ -10,7 +10,6 @@ from chip import Chip
 max_tries: int = 1000
 counter: int = 0
 tries_counter: int = 0
-iteration_counter: int = 0
 
 def is_move_valid(wire: 'Wire', grid: 'Grid', desired_position: tuple[int, int, int]) -> bool:
     global counter
@@ -65,16 +64,12 @@ def lay_wire(wire: 'Wire', grid: 'Grid') -> None:
             if (random_direction != wire.father.get_coords()):
                 grid.values[random_direction[2]][random_direction[1]][random_direction[0]] -= 1
 
-def run_random() -> None:
+def run_random(chip_no: int, netlist_no: int) -> 'Chip':
     costs_list: list[int] = []
-
-    global iteration_counter
     total_costs = 0
 
-
-    while (iteration_counter < 100):
-        iteration_counter += 1
-        chip = Chip(0, "netlist_1.csv")
+    while (True):
+        chip = Chip(chip_no, f"netlist_{netlist_no}.csv")
 
         for mother in chip.gates.values():
             for father in mother.get_destinations():
@@ -98,10 +93,10 @@ def run_random() -> None:
         
         total_costs = chip.calculate_costs()
         costs_list.append(total_costs)
+        print(total_costs)
 
 
         #print(f'TOTAL COSTS: ${total_costs}')
-        print(iteration_counter)
 
     for gate in chip.gates.values():
         print(gate)
