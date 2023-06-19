@@ -66,6 +66,17 @@ def lay_wire(wire: 'Wire', grid: 'Grid') -> None:
             if (random_direction != wire.father.get_coords()):
                 grid.values[random_direction[2]][random_direction[1]][random_direction[0]] -= 1
 
+def random_reassign_wire(new_wire: "Wire", grid: "Grid"):
+    # Trace back wire
+    for unit in range(len(new_wire.get_path()) - 1):
+        coords = new_wire.pop_unit()
+
+        # Reset grid on traced back route
+        grid.values[coords[2]][coords[1]][coords[0]] += 1
+
+    # Start a new wire
+    lay_wire(new_wire, grid)
+
 def run_random(chip_no: int, netlist_no: int, output_filename: str) -> 'Chip':
     costs_list: list[int] = []
     total_costs = 0
@@ -82,16 +93,9 @@ def run_random(chip_no: int, netlist_no: int, output_filename: str) -> 'Chip':
 
                 # Reset wire and its path on the grid and find new path until wire has found father
                 while (new_wire.get_current_position() != new_wire.father.get_coords()):
+                    random_reassign_wire(new_wire, chip.grid)
 
-                    # Trace back wire
-                    for unit in range(len(new_wire.get_path()) - 1):
-                        coords = new_wire.pop_unit()
-
-                        # Reset grid on traced back route
-                        chip.grid.values[coords[2]][coords[1]][coords[0]] += 1
-
-                    # Start a new wire
-                    lay_wire(new_wire, chip.grid)
+                   
         
         total_costs = chip.calculate_costs()
         costs_list.append(total_costs)
