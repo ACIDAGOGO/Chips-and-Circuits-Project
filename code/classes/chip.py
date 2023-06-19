@@ -15,6 +15,8 @@ class Chip:
         self.load_connections(f"./../data/chip_{chip_no}/{netlist_name}")
         self.fill_grid()
         self.wires: list['Wire'] = []
+        self.iteration: int
+        self.price: int
         
 
     # Create grid in 2d array
