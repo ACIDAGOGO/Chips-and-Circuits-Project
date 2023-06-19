@@ -1,11 +1,13 @@
 import sys
 sys.path.append("../classes")
+sys.path.append("..")
 
 import random
 import matplotlib.pyplot as plt
 from grid import Grid
 from wire import Wire
 from chip import Chip
+from save import save_to_file
 
 max_tries: int = 1000
 counter: int = 0
@@ -64,7 +66,7 @@ def lay_wire(wire: 'Wire', grid: 'Grid') -> None:
             if (random_direction != wire.father.get_coords()):
                 grid.values[random_direction[2]][random_direction[1]][random_direction[0]] -= 1
 
-def run_random(chip_no: int, netlist_no: int) -> 'Chip':
+def run_random(chip_no: int, netlist_no: int, output_filename: str) -> 'Chip':
     costs_list: list[int] = []
     total_costs = 0
 
@@ -95,9 +97,9 @@ def run_random(chip_no: int, netlist_no: int) -> 'Chip':
         costs_list.append(total_costs)
         print(total_costs)
 
-
-        #print(f'TOTAL COSTS: ${total_costs}')
-
+        # Save chipset to json file
+        save_to_file(chip, output_filename)
+        
     for gate in chip.gates.values():
         print(gate)
         print(f'CONNECTIONS: {gate.get_destinations()}')
