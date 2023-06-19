@@ -17,6 +17,7 @@ def is_move_valid(wire: 'Wire', grid: 'Grid', desired_position: tuple[int, int, 
     global counter
     global tries_counter
 
+    previous_position = wire.get_previous_position()
     grid_upperbounds = grid.get_grid_size()
 
     if desired_position[0] > grid_upperbounds[0] or desired_position[1] > grid_upperbounds[1] or desired_position[2] > grid_upperbounds[2] or desired_position[0] < 0 or desired_position[1] < 0 or desired_position[2] < 0:

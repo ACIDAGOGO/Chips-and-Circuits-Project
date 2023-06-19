@@ -29,17 +29,35 @@ class HillClimber:
         self.costs = self.chip.calculate_costs()
 
         # while (True):
-        for wire in range(len(self.chip.wires)):
+        # for wire in range(len(self.chip.wires)):
+        #     for _ in range(1000):
+        #         print(self.costs)
+        #         chip_copy = copy.deepcopy(self.chip)
+        #         wire_copy = chip_copy.wires[wire]
+        #         random_reassign_wire(wire_copy, chip_copy.grid)
+        #         while (wire_copy.get_current_position() != wire_copy.father.get_coords()):
+        #             #print(len(wire_copy.path))
+        #             print(f"current {wire_copy.get_current_position()}")
+        #             print(wire_copy.father.get_coords())
+        #             random_reassign_wire(wire_copy, chip_copy.grid)
+        #             #print(wire_copy.path)
+                
+        #         copy_cost = chip_copy.calculate_costs()
+        #         print(f'copy: {copy_cost}')
+        #         current_cost = self.chip.calculate_costs()
+        #         if (copy_cost < current_cost):
+        #             self.chip = chip_copy
+
+        for wire in self.chip.wires:
             for _ in range(1000):
                 print(self.costs)
                 chip_copy = copy.deepcopy(self.chip)
-                wire_copy = chip_copy.wires[wire]
-                random_reassign_wire(wire_copy, chip_copy.grid)
-                while (wire_copy.get_current_position() != wire_copy.father.get_coords()):
+                random_reassign_wire(wire, self.chip.grid)
+                while (wire.get_current_position() != wire.father.get_coords()):
                     #print(len(wire_copy.path))
-                    print(f"current {wire_copy.get_current_position()}")
-                    print(wire_copy.father.get_coords())
-                    random_reassign_wire(wire_copy, chip_copy.grid)
+                    print(f"current {wire.get_current_position()}")
+                    print(wire.father.get_coords())
+                    random_reassign_wire(wire, self.chip.grid)
                     #print(wire_copy.path)
                 
                 copy_cost = chip_copy.calculate_costs()
