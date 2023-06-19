@@ -72,11 +72,7 @@ def run_random() -> None:
     total_costs = 0
 
 
-<<<<<<< HEAD
     while (iteration_counter < 100):
-=======
-    while (iteration_counter < 2):
->>>>>>> d751f9f34776a7786e3fdbe815808e5b2af5ffc7
         iteration_counter += 1
         chip = Chip(0, "netlist_1.csv")
 
