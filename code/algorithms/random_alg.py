@@ -1,13 +1,14 @@
 import sys
+sys.path.append("../analysis")
 sys.path.append("../classes")
-sys.path.append("..")
 
 import random
+import copy
 import matplotlib.pyplot as plt
 from grid import Grid
 from wire import Wire
 from chip import Chip
-from save import save_to_file
+from analysis.save import save_to_file
 
 max_tries: int = 1000
 counter: int = 0
@@ -76,32 +77,44 @@ def run_random(chip_no: int, netlist_no: int, output_filename: str) -> 'Chip':
     iteration = 0
 
     while (True):
+        try:
+            chip = Chip(chip_no, f"netlist_{netlist_no}.csv")
 
-        chip = Chip(chip_no, f"netlist_{netlist_no}.csv")
+            for mother in chip.gates.values():
+                for father in mother.get_destinations():
+                    new_wire = Wire(mother, father)
+                    chip.add_wire(new_wire)
+                    # print(f'WIRE ORIGIN: {new_wire.mother.get_id()} DESTINATION: {new_wire.father.get_id()}')
+                    lay_wire(new_wire, chip.grid)
 
-        for mother in chip.gates.values():
-            for father in mother.get_destinations():
-                new_wire = Wire(mother, father)
-                chip.add_wire(new_wire)
-                # print(f'WIRE ORIGIN: {new_wire.mother.get_id()} DESTINATION: {new_wire.father.get_id()}')
-                lay_wire(new_wire, chip.grid)
+                    # Reset wire and its path on the grid and find new path until wire has found father
+                    while (new_wire.get_current_position() != new_wire.father.get_coords()):
+                        random_reassign_wire(new_wire, chip.grid)
 
-                # Reset wire and its path on the grid and find new path until wire has found father
-                while (new_wire.get_current_position() != new_wire.father.get_coords()):
-                    random_reassign_wire(new_wire, chip.grid)
+            # Calculate total cost of chip       
+            total_costs = chip.calculate_costs()
 
-        # Calculate total cost of chip       
-        total_costs = chip.calculate_costs()
+            # Remeber cheapest chip configuration
+            if (iteration == 0):
+                best_chip = copy.deepcopy(chip)
+            else:
+                if (total_costs < best_chip.calculate_costs()):
+                    best_chip = copy.deepcopy(chip)
 
-        # DEBUG
-        print(f'COST:{total_costs}')
 
-        # Count chip iteration number
-        chip.iteration = iteration
-        iteration += 1
+            # DEBUG
+            print(f'COST:{total_costs}')
 
-        # Save relevant chip data to file
-        save_to_file(chip, output_filename)
+            # Count chip iteration number
+            chip.iteration = iteration
+            iteration += 1
 
-    return chip
+            # Save relevant chip data to file
+            save_to_file(chip, output_filename)
+
+        except KeyboardInterrupt:
+            break
+
+    print("jhgdfhuhfd")
+    return best_chip
 

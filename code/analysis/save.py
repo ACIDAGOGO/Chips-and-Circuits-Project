@@ -1,6 +1,6 @@
 import csv
 import sys
-sys.path.append("classes")
+sys.path.append("../classes")
 
 from chip import Chip
 
@@ -8,10 +8,10 @@ def extract_data(chip: 'Chip') -> list[int]:
     data: list = []
 
     # Adds iteration, cost, wirecount, intersectioncount to data list
-    data.append(chip.iteration)
-    data.append(chip.cost)
-    data.append(chip.wirecount)
-    data.append(chip.intersectioncount)
+    data.append(int(chip.iteration))
+    data.append(int(chip.cost))
+    data.append(int(chip.wirecount))
+    data.append(int(chip.intersectioncount))
 
     return data
 

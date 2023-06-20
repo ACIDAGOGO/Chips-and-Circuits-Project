@@ -10,16 +10,13 @@ from hill_climber import HillClimber
 if __name__ == "__main__":
     
     # Check if at least three command-line arguments are provided
-    if len(sys.argv) >= 4:
+    if len(sys.argv) >= 5:
         chip_number: int = int(sys.argv[1])
         netlist_number: int = int(sys.argv[2])
-        output_filename: str = sys.argv[3]
-
-        print(chip_number)
-        print(netlist_number)
-        print(output_filename)
+        algorithm: str = sys.argv[3]
+        output_filename: str = sys.argv[4]
     else:
-        print("Insufficient command-line arguments. Please provide at least three arguments: chip number, netlist number, output filename.")
+        print("Insufficient command-line arguments. Please provide at least four arguments: chip number, netlist number, algorithm, output filename.")
         sys.exit(1)
 
     if chip_number not in [0, 1, 2]:
@@ -36,9 +33,9 @@ if __name__ == "__main__":
     
     # Run random algorithm
     print("start run")
-    #chip = random_alg.run_random(chip_number, netlist_number, output_filename)
-    #visualise(chip)
+    chip = random_alg.run_random(chip_number, netlist_number, output_filename)
+    visualise(chip, algorithm)
 
     # Run Hill Climber algorithm
-    hillclimber = HillClimber(chip_number, netlist_number)
-    hillclimber.run()
+    # hillclimber = HillClimber(chip_number, netlist_number)
+    # hillclimber.run()

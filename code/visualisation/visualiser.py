@@ -38,7 +38,7 @@ def extract_xyz(coords: list[tuple[int, int, int]]) -> tuple[list[int], list[int
     return x, y, z
 
 
-def visualise(chip: 'Chip') -> None:
+def visualise(chip: 'Chip', algorithm: str) -> None:
     plt.style.use('_mpl-gallery')
 
     gates = get_gates(chip)
@@ -46,6 +46,9 @@ def visualise(chip: 'Chip') -> None:
     # Plot gates
     fig, ax = plt.subplots(subplot_kw={"projection": "3d"})
     ax.scatter(gates[0], gates[1], gates[2], color='red')
+
+    # Set title
+    plt.title(f"Chip {chip.chip_no} - {chip.netlist_name} - Algorithm: {algorithm} - Cost: {chip.calculate_costs()}")
 
     # Plot wires
     # Get paths
@@ -59,8 +62,10 @@ def visualise(chip: 'Chip') -> None:
         ax.plot(x, y, z, color=c)
 
 
-    ax.set(xticklabels=[],
-        yticklabels=[],
-        zticklabels=[])
+    # Set constant plot size
+    x, y, z = chip.grid.get_grid_size()
+    ax.set_xlim(0, x)
+    ax. set_ylim(0, y)
+    ax.set_zlim(0,z)
 
     plt.show()
