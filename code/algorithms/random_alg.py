@@ -10,6 +10,8 @@ from wire import Wire
 from chip import Chip
 from analysis.save import save_to_file
 
+
+random.seed(a = 1)
 max_tries: int = 1000
 counter: int = 0
 tries_counter: int = 0
@@ -115,6 +117,5 @@ def run_random(chip_no: int, netlist_no: int, output_filename: str) -> 'Chip':
         except KeyboardInterrupt:
             break
 
-    print("jhgdfhuhfd")
     return best_chip
 
