@@ -45,7 +45,7 @@ def visualise(chip: 'Chip', algorithm: str) -> None:
 
     # Plot gates
     fig, ax = plt.subplots(subplot_kw={"projection": "3d"})
-    ax.scatter(gates[0], gates[1], gates[2], color='red')
+    ax.scatter(gates[0], gates[1], gates[2], color='black')
 
     # Set title
     plt.title(f"Chip {chip.chip_no} - {chip.netlist_name} - Algorithm: {algorithm} - Cost: {chip.calculate_costs()}")
@@ -67,5 +67,8 @@ def visualise(chip: 'Chip', algorithm: str) -> None:
     ax.set_xlim(0, x)
     ax. set_ylim(0, y)
     ax.set_zlim(0,z)
+    ax.set_xticks(range(0, x + 1))
+    ax.set_yticks(range(0, y + 1))
+    ax.set_zticks(range(0, z + 1))
 
     plt.show()
