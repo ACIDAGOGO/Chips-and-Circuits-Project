@@ -43,19 +43,3 @@ class Grid:
             return True
         
         return False
-
-
-    # Visualizes grid in scatterplot
-    def visualize_grid(self) -> None:
-        fig, ax = plt.subplots()
-
-        # Define colormap
-        cmap = plt.cm.gray
-        cmap.set_under('red')
-        ax.imshow(self.values, cmap=cmap, vmin = 0.01)
-        
-        ax.set_xticks(range(self.grid_x))
-        ax.set_yticks(range(self.grid_y))
-        ax.grid(True, color='white', linewidth=0.5)
-
-        plt.show()

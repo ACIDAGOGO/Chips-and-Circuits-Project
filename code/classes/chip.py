@@ -76,19 +76,20 @@ class Chip:
                 for value in row:
                     if value < -1:
                         intersections = abs(value) - 1
+                        self.intersectioncount += intersections
                     else:
                         intersections = 0
 
                     # Add every wire and intersection to the total count
-                    self.wirecount += abs(value)
-                    self.intersectioncount += intersections
-    
-                    cost += abs(value) + 300 * intersections
+                    if value < 0:
+                        self.wirecount += abs(value)
+                        cost += (abs(value) + (300 * intersections))
 
         # Add 1 per wire, because in the grid, a wire on top of a father gate is not represented
         cost += len(self.wires)
+        self.wirecount += len(self.wires)
 
         # Save cost to chip
-        self.cost = cost
+        self.cost = int(cost)
 
         return int(cost)
