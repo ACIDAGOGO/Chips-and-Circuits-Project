@@ -1,0 +1,11 @@
+# MacOS
+.DS_Store
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+
+# mypy
+.mypy_cache/
+.dmypy.json
+dmypy.json

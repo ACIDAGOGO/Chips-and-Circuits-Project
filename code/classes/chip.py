@@ -56,6 +56,7 @@ class Chip:
             for row in netlist:
                 
                 # Set origin and destination gates
+                print(self.gates)
                 origin_gate = self.gates[row[0]]
                 destination_gate = self.gates[row[1]]
 
