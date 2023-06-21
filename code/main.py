@@ -32,10 +32,10 @@ if __name__ == "__main__":
         sys.exit(1)
     
     # Run random algorithm
-    print("start run")
-    chip = random_alg.run_random(chip_number, netlist_number, output_filename)
-    visualise(chip, algorithm)
+    # print("start run")
+    # chip = random_alg.run_random(chip_number, netlist_number, output_filename)
+    # visualise(chip, algorithm)
 
     # Run Hill Climber algorithm
-    # hillclimber = HillClimber(chip_number, netlist_number)
-    # hillclimber.run()
+    hillclimber = HillClimber(chip_number, netlist_number, output_filename)
+    hillclimber.run()
