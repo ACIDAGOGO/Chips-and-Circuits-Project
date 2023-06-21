@@ -70,7 +70,8 @@ def random_reassign_wire(new_wire: "Wire", grid: "Grid"):
         coords = new_wire.pop_unit()
 
         # Reset grid on traced back route
-        grid.values[coords[2]][coords[1]][coords[0]] += 1
+        if grid.values[coords[2]][coords[1]][coords[0]] != new_wire.father.get_id():
+            grid.values[coords[2]][coords[1]][coords[0]] += 1
 
     # Start a new wire
     lay_wire(new_wire, grid)
