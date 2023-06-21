@@ -83,6 +83,8 @@ class Chip:
         Calculate total cost of chip configuration.
         """
         cost = 0
+        self.wirecount = 0
+        self.intersectioncount = 0
 
         # Loop through grid
         for layer in self.grid.values:

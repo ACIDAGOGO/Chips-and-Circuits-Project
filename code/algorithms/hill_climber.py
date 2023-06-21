@@ -49,29 +49,31 @@ class HillClimber:
                         copy_cost = chip_copy.calculate_costs()
                         print(f'copy: {copy_cost}')
                         current_cost = self.chip.calculate_costs()
+
+                        # SHIT CODE: WTF ZIJN DIE ITERATIONS? t werkt wel maar ziet er kut uit               
+                        if (iteration == 0 and self.chip.iteration == 0):
+                            # Save first chip data to file
+                            save_to_file(self.chip, self.output_filename)
+                            self.chip.iteration += 1
                         
                         if (copy_cost < current_cost):
-                            # Update chip iteration number
-                            self.chip.iteration = iteration
-
-                            # Save relevant chip data to file
-                            save_to_file(self.chip, self.output_filename)
-
-                            # Count chip iteration number
-                            iteration += 1
-
+                            
                             # Update chip to better version
                             self.chip = chip_copy
 
+                            # Update algorithm iteration number
+                            iteration += 1
 
+                            # Update chip iteration number
+                            self.chip.iteration = iteration
 
-
-                
+                            if (self.chip.iteration > 0):
+                                # Save relevant chip data to file
+                                save_to_file(self.chip, self.output_filename)                  
 
             except KeyboardInterrupt:
                 break
         print(f"current: {current_cost}")
-
 
         return self.chip
 
