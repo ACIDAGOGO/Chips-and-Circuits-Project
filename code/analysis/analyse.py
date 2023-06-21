@@ -72,23 +72,23 @@ if __name__ == "__main__":
     plt.show()
 
 
-    # Plotting histogram of total number of wire intersection
-    bin_width, num_bins = calculate_optimal_bins(intersectioncounts)
+    # # Plotting histogram of total number of wire intersection
+    # bin_width, num_bins = calculate_optimal_bins(intersectioncounts)
 
-    plt.hist(intersectioncounts, bins=range(min(intersectioncounts), max(intersectioncounts) + bin_width, bin_width), linewidth = 1.2, edgecolor = 'black')
-    plt.suptitle(f"Frequency of total amount of wire intersections over {len(iterations)} iterations", fontsize = 12)
-    plt.title(f"Mean = {round(statistics.mean(intersectioncounts))}, Min = {min(intersectioncounts)}, Max = {max(intersectioncounts)}", fontsize = 10)
-    plt.xlabel("Total number of wire intersections on chip")
-    plt.ylabel("Frequency")
-    plt.show()
+    # plt.hist(intersectioncounts, bins=range(min(intersectioncounts), max(intersectioncounts) + bin_width, bin_width), linewidth = 1.2, edgecolor = 'black')
+    # plt.suptitle(f"Frequency of total amount of wire intersections over {len(iterations)} iterations", fontsize = 12)
+    # plt.title(f"Mean = {round(statistics.mean(intersectioncounts))}, Min = {min(intersectioncounts)}, Max = {max(intersectioncounts)}", fontsize = 10)
+    # plt.xlabel("Total number of wire intersections on chip")
+    # plt.ylabel("Frequency")
+    # plt.show()
 
 
-    # Plotting histogram of total number of wires
-    bin_width, num_bins = calculate_optimal_bins(wirecounts)
+    # # Plotting histogram of total number of wires
+    # bin_width, num_bins = calculate_optimal_bins(wirecounts)
 
-    plt.hist(wirecounts, bins=range(min(wirecounts), max(wirecounts) + bin_width, bin_width), linewidth = 1.2, edgecolor = 'black')
-    plt.suptitle(f"Frequency of total wire units over {len(iterations)} iterations", fontsize = 12)
-    plt.title(f"Mean = {round(statistics.mean(wirecounts))}, Min = {min(wirecounts)}, Max = {max(wirecounts)}", fontsize = 10)
-    plt.xlabel("Total number of wire units on chip")
-    plt.ylabel("Frequency")
-    plt.show()
+    # plt.hist(wirecounts, bins=range(min(wirecounts), max(wirecounts) + bin_width, bin_width), linewidth = 1.2, edgecolor = 'black')
+    # plt.suptitle(f"Frequency of total wire units over {len(iterations)} iterations", fontsize = 12)
+    # plt.title(f"Mean = {round(statistics.mean(wirecounts))}, Min = {min(wirecounts)}, Max = {max(wirecounts)}", fontsize = 10)
+    # plt.xlabel("Total number of wire units on chip")
+    # plt.ylabel("Frequency")
+    # plt.show()
