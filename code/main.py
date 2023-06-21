@@ -31,11 +31,20 @@ if __name__ == "__main__":
         print("Netlist number not valid.")
         sys.exit(1)
     
-    # Run random algorithm
-    print("start run")
-    chip = random_alg.run_random(chip_number, netlist_number, output_filename)
-    visualise(chip, algorithm)
+    if (algorithm == "random"):
 
-    # Run Hill Climber algorithm
-    # hillclimber = HillClimber(chip_number, netlist_number)
-    # hillclimber.run()
+        # Run random algorithm
+        print("Start Random")
+        chip = random_alg.run_random(chip_number, netlist_number, output_filename)
+        visualise(chip, algorithm)
+    elif (algorithm == "hillclimber"):
+        
+        # Run Hill Climber algorithm
+        print("Start Hill Climber")
+        hillclimber = HillClimber(chip_number, netlist_number)
+        hillclimber.run()
+    elif (algorithm == "astar"):
+        pass
+    else:
+        print("Invalid algorithm: Choose from random, hillclimber or astar")
+        sys.exit(1)
