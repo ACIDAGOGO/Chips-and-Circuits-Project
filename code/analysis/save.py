@@ -1,13 +1,16 @@
 import csv
 import sys
+from chip import Chip  # type: ignore
 sys.path.append("../classes")
 
-from chip import Chip
 
 def extract_data(chip: 'Chip') -> list[int]:
+    """
+    Grab iteration number, total cost, total wirecount
+    and intersectioncount from chip. Return it as list.
+    """
     data: list = []
 
-    # Adds iteration, cost, wirecount, intersectioncount to data list
     data.append(int(chip.iteration))
     data.append(int(chip.cost))
     data.append(int(chip.wirecount))
@@ -17,12 +20,15 @@ def extract_data(chip: 'Chip') -> list[int]:
 
 
 def save_to_file(chip: 'Chip', output_filename: str):
+    """
+    Write data from list to csv file.
+    """
     data = extract_data(chip)
 
-    # Opens output file and appends latest chip iteration data
-    with open(f'../output/{output_filename}.csv', "a", newline = "") as file:
+    # Open output file and append latest chip iteration data
+    with open(f'../output/{output_filename}.csv', "a", newline="") as file:
         writer = csv.writer(file)
         if data[0] == 0:
-            writer.writerow(["iteration","cost","wirecount","intersectioncount"])
+            writer.writerow(["iteration", "cost", "wirecount", "intersectioncount"])
 
         writer.writerow(data)

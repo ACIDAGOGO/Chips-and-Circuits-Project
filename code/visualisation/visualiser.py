@@ -1,8 +1,8 @@
 import sys
-import matplotlib.pyplot as plt
+import matplotlib.pyplot as plt  # type: ignore
+from matplotlib.pyplot import cm  # type: ignore
+from chip import Chip  # type: ignore
 import numpy as np
-from matplotlib.pyplot import cm
-from chip import Chip
 sys.path.append("./classes")
 
 
@@ -78,10 +78,10 @@ def visualise(chip: 'Chip', algorithm: str) -> None:
         # Plot wires
         ax.plot(x, y, z, color=c)
 
-    # Set constant plot size
+    # Set adaptive plot size
     x, y, z = chip.grid.get_grid_size()
     ax.set_xlim(0, x)
-    ax. set_ylim(0, y)
+    ax.set_ylim(0, y)
     ax.set_zlim(0, z)
     ax.set_xticks(range(0, x + 1))
     ax.set_yticks(range(0, y + 1))
