@@ -41,8 +41,9 @@ if __name__ == "__main__":
         
         # Run Hill Climber algorithm
         print("Start Hill Climber")
-        hillclimber = HillClimber(chip_number, netlist_number)
-        hillclimber.run()
+        hillclimber = HillClimber(chip_number, netlist_number, output_filename)
+        chip = hillclimber.run()
+        visualise(chip, algorithm)
     elif (algorithm == "astar"):
         pass
     else:
