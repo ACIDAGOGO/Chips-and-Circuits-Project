@@ -83,3 +83,7 @@ if __name__ == "__main__":
     # plt.xlabel("Total number of wire units on chip")
     # plt.ylabel("Frequency")
     # plt.show()
+
+    # Scatter plot to show how costs decline after a certain amount of iterations
+    plt.scatter(iterations, costs)
+    plt.show()
