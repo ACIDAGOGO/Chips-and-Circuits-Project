@@ -32,7 +32,8 @@ class WireSegment:
         return self.position == other.position
     
     def __repr__(self) -> str:
-        return f"Previous: ({self.previous_segment}), Position: ({self.position})"
+        # return f"Previous: ({self.previous_segment}), Position: ({self.position})"
+        return f"{self.position}"
 
 
 class AstarAlg:
@@ -43,7 +44,9 @@ class AstarAlg:
 
     def create_parent_segments(self, mother_coords: tuple[int, int, int], father_coords: tuple[int, int, int]) -> tuple["WireSegment", "WireSegment"]:
         mother_segment = WireSegment(None, mother_coords)
+        mother_segment.wire_cost = mother_segment.manhattan_cost = mother_segment.total_cost = 0
         father_segment = WireSegment(None, father_coords)
+        father_segment.wire_cost = father_segment.manhattan_cost = father_segment.total_cost = 0
 
         return mother_segment, father_segment
     
@@ -155,6 +158,8 @@ class AstarAlg:
             # Check if father is reached
             completed, wire_path = self.check_if_wire_completed(current_segment, father_segment)
             if (completed):
+                print(closed_list)
+                print(wire_path)
                 return wire_path
 
             # Get all next possible segments
@@ -167,6 +172,7 @@ class AstarAlg:
                 # Skip segment if it has already been passed
                 for closed_segment in closed_list:
                     if segment == closed_segment:
+                        print("already in closed")
                         go_next = True
                 if go_next:
                     continue
@@ -177,6 +183,7 @@ class AstarAlg:
                 # Skip segment if it is already in open list and has a higher cost
                 for open_segment in open_list:
                     if segment == open_segment and segment.wire_cost > open_segment.wire_cost:
+                        print("already in open")
                         go_next = True
                 if go_next:
                     continue
@@ -226,7 +233,7 @@ class AstarAlg:
 
         connections.sort(key=operator.itemgetter(2))
         
-        return connections
+        return connections[::-1]
 
     def run(self):
         # Get sorted connections
