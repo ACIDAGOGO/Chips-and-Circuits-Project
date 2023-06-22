@@ -1,7 +1,7 @@
 import csv
 import sys
 import os
-from chip import Chip  # type: ignore
+from classes.chip import Chip  # type: ignore
 sys.path.append("../classes")
 
 

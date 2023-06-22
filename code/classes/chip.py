@@ -1,7 +1,7 @@
 import csv
-from gate import Gate
-from wire import Wire
-from grid import Grid
+from .gate import Gate
+from .wire import Wire
+from .grid import Grid
 
 
 class Chip:

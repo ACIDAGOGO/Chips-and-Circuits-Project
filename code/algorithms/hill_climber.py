@@ -6,9 +6,9 @@ sys.path.append("..")
 
 import copy
 import random
-from chip import Chip
-from wire import Wire
-from random_alg import lay_wire, random_reassign_wire
+from classes.chip import Chip
+from classes.wire import Wire
+from .random_alg import lay_wire, random_reassign_wire
 
 from analysis.save import save_to_file
 

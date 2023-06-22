@@ -1,4 +1,4 @@
-from gate import Gate
+from .gate import Gate
 import numpy as np
 import matplotlib.pyplot as plt  # type: ignore
 from typing import Any

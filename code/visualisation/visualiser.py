@@ -1,7 +1,7 @@
 import sys
 import matplotlib.pyplot as plt  # type: ignore
 from matplotlib.pyplot import cm  # type: ignore
-from chip import Chip  # type: ignore
+from classes.chip import Chip  # type: ignore
 import numpy as np
 sys.path.append("./classes")
 
