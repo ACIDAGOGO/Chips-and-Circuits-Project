@@ -1,4 +1,4 @@
-from gate import Gate
+from .gate import Gate
 
 class Wire:
     def __init__(self, mother: 'Gate', father: 'Gate'):

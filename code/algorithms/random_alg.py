@@ -5,9 +5,9 @@ sys.path.append("../classes")
 import random
 import copy
 import matplotlib.pyplot as plt
-from grid import Grid
-from wire import Wire
-from chip import Chip
+from classes.grid import Grid
+from classes.wire import Wire
+from classes.chip import Chip
 from analysis.save import save_to_file
 
 

@@ -4,10 +4,10 @@ sys.path.append("algorithms")
 sys.path.append("classes")
 sys.path.append("visualisation")
 
-from visualiser import visualise
-import random_alg
-from hill_climber import HillClimber
-from astar import AstarAlg
+from visualisation.visualiser import visualise
+import algorithms.random_alg
+from algorithms.hill_climber import HillClimber
+from algorithms.astar import AstarAlg
 
 if __name__ == "__main__":
     
@@ -61,3 +61,5 @@ if __name__ == "__main__":
     else:
         print("Invalid algorithm: Choose from random, hillclimber or astar")
         sys.exit(1)
+
+astar = AstarAlg(chip_number, netlist_number)

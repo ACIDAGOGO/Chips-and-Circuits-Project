@@ -1,5 +1,5 @@
 import sys
-sys.path.append("../classes")
+sys.path.insert(0, "../classes")
 
 from typing import Optional
 import operator
@@ -275,6 +275,7 @@ class AstarAlg:
                 # Add wire object to chip
                 self.chip.add_wire(new_wire)
 
+astar = AstarAlg(0, 1)
 # 1. Add the starting square (or node) to the open list.
 
 # 2. Repeat the following:
