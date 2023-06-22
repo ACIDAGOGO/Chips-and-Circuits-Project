@@ -6,6 +6,7 @@ sys.path.append("visualisation")
 from visualiser import visualise
 import random_alg
 from hill_climber import HillClimber
+from astar import AstarAlg
 
 if __name__ == "__main__":
     
@@ -45,7 +46,10 @@ if __name__ == "__main__":
         chip = hillclimber.run()
         visualise(chip, algorithm)
     elif (algorithm == "astar"):
-        pass
+        print("Start A*")
+        astar = AstarAlg(chip_number, netlist_number)
+        chip = astar.chip
+        visualise(chip, algorithm)
     else:
         print("Invalid algorithm: Choose from random, hillclimber or astar")
         sys.exit(1)
