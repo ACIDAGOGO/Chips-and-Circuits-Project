@@ -1,9 +1,12 @@
 import sys
 sys.path.append("../classes")
 
+from typing import Optional
+
 from chip import Chip
 from gate import Gate
 from wire import Wire
+
 
 class WireSegment:
     
@@ -43,16 +46,23 @@ class AstarAlg:
 
         return mother_segment, father_segment
     
-    def check_if_wire_completed(self, current_segment: "WireSegment", father_segment: "WireSegment"):
+    def update_grid(self, wire_path: list[tuple[int, int, int]]) -> None:
+        for coordinate in wire_path[1:-1]:
+                self.chip.grid.values[coordinate[2]][coordinate[1]][coordinate[0]] -= 1
+    
+    def check_if_wire_completed(self, current_segment: "WireSegment", father_segment: "WireSegment") -> tuple[bool, Optional[list[tuple[int, int, int]]]]:
         wire_path = []
         if current_segment == father_segment:
             segment = current_segment
             while segment is not None:
                 wire_path.append(segment.position)
                 segment = segment.previous_segment
-            return True, wire_path.reverse() # Return reversed path
+
+            self.update_grid(wire_path)
+
+            return True, wire_path # Return reversed path
         else:
-            return False, wire_path.reverse()
+            return False, None
         
     def get_all_directions(self, current_segment: "WireSegment") -> list[tuple[int, int, int]]:
         x = current_segment.get_x()
@@ -98,7 +108,7 @@ class AstarAlg:
         return next_segments
     
     def assign_next_segment_costs(self, next_segment: "WireSegment", father_coords: tuple[int, int, int]):
-        if (self.chip.grid.values[next_segment.get_z()][next_segment.get_y()][next_segment.get_x()] < -1):
+        if (self.chip.grid.values[next_segment.get_z()][next_segment.get_y()][next_segment.get_x()] <= -1):
             next_segment.wire_cost += 300
         else:
             next_segment.wire_cost += 1
@@ -138,7 +148,7 @@ class AstarAlg:
 
             # Check if father is reached
             completed, wire_path = self.check_if_wire_completed(current_segment, father_segment)
-            if (completed == True):
+            if (completed):
                 return wire_path
 
             # Get all next possible segments
@@ -148,20 +158,35 @@ class AstarAlg:
 
             # 
             for segment in next_segments:
+                go_next = False
+
                 # Check if segment has not been passed already
                 for closed_segment in closed_list:
                     if segment == closed_segment:
-                        continue
+                        go_next = True
                 
+                if go_next:
+                    continue
+
                 # Assign costs to the next segment
                 self.assign_next_segment_costs(segment, father_coords)
 
                 for open_segment in open_list:
                     if segment == open_segment and segment.wire_cost > open_segment.wire_cost:
-                        continue
+                        go_next = True
+
+                if go_next:
+                    continue    
 
                 # If the segment passes all tests, add it to the open list
                 open_list.append(segment)
+
+                print(f"Open list {open_list}")
+                print(f"Closed list {closed_list}")
+
+
+        print("Can't lay wire")
+        sys.exit(1)
 
     def run(self):
         for mother in self.chip.gates.values():
