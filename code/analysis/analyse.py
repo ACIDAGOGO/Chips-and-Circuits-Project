@@ -1,4 +1,5 @@
 import sys
+import os
 import csv
 import matplotlib.pyplot as plt  # type: ignore
 import math
@@ -26,7 +27,7 @@ if __name__ == "__main__":
     # Check if at least three command-line arguments are provided
     if len(sys.argv) >= 2:
         filename: str = sys.argv[1]
-        path: str = f"../../output/{filename}"
+        filepath: str = f"../../output/{os.path.splitext(filename)}/{filename}"
 
     else:
         print("Insufficient command-line arguments. Please provide at least one argument: filename.")
@@ -38,7 +39,7 @@ if __name__ == "__main__":
     wirecounts: list[int] = []
     intersectioncounts: list[int] = []
 
-    with open(path) as file:
+    with open(filepath) as file:
         reader = csv.reader(file)
 
         # Skip the first line

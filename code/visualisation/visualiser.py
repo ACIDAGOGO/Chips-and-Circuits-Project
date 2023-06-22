@@ -47,16 +47,15 @@ def extract_xyz(coords: list[tuple[int, int, int]]) -> tuple[list[int], list[int
     return x, y, z
 
 
-def visualise(chip: 'Chip', algorithm: str) -> None:
+def visualise(chip: 'Chip', algorithm: str, output_filename: str) -> None:
     """
     Plot given chip configuration in a 3D coloured scatterplot.
     """
     plt.style.use('_mpl-gallery')
-
     gates = get_gates(chip)
 
     # Plot gates
-    fig, ax = plt.subplots(subplot_kw={"projection": "3d"})
+    fig, ax = plt.subplots(subplot_kw={"projection": "3d"}, figsize=(8, 8))
     ax.scatter(gates[0], gates[1], gates[2], color='black')
 
     # Plot gate numbers next to gates on grid
@@ -64,7 +63,7 @@ def visualise(chip: 'Chip', algorithm: str) -> None:
         ax.text(gates[0][i], gates[1][i], gates[2][i], ' ' + str(i + 1))
 
     # Set title
-    plt.title(f"Chip {chip.chip_no} - {chip.netlist_name} - Algorithm: {algorithm} - Cost: {chip.calculate_costs()}")
+    plt.title(f"Chip {chip.chip_no} - {chip.netlist_name} - Algorithm: {algorithm} - Cost: {chip.calculate_costs()}", fontsize=15)
 
     # Get wire paths
     paths = get_wires(chip)
@@ -87,4 +86,5 @@ def visualise(chip: 'Chip', algorithm: str) -> None:
     ax.set_yticks(range(0, y + 1))
     ax.set_zticks(range(0, z + 1))
 
-    plt.show()
+    # Save visualisation to file in output folder
+    fig.savefig(f'../output/{output_filename}/{output_filename}.png', bbox_inches='tight', pad_inches=1, dpi=300)

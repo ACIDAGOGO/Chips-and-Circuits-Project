@@ -1,4 +1,5 @@
 import sys
+import os
 sys.path.append("algorithms")
 sys.path.append("classes")
 sys.path.append("visualisation")
@@ -31,25 +32,32 @@ if __name__ == "__main__":
     if netlist_number not in allowed_netlist_numbers:
         print("Netlist number not valid.")
         sys.exit(1)
+
+    # Create output folder
+    folder = f'../output/{output_filename}'
+
+    if not os.path.exists(folder):
+        os.mkdir(folder)
+    else:
+        print("Please specify a unique output filename.")
+        sys.exit(1)
     
     if (algorithm == "random"):
-
         # Run random algorithm
         print("Start Random")
         chip = random_alg.run_random(chip_number, netlist_number, output_filename)
-        visualise(chip, algorithm)
+        visualise(chip, algorithm, output_filename)
     elif (algorithm == "hillclimber"):
-        
         # Run Hill Climber algorithm
         print("Start Hill Climber")
         hillclimber = HillClimber(chip_number, netlist_number, output_filename)
         chip = hillclimber.run()
-        visualise(chip, algorithm)
+        visualise(chip, algorithm, output_filename)
     elif (algorithm == "astar"):
         print("Start A*")
         astar = AstarAlg(chip_number, netlist_number)
         chip = astar.chip
-        visualise(chip, algorithm)
+        visualise(chip, algorithm, output_filename)
     else:
         print("Invalid algorithm: Choose from random, hillclimber or astar")
         sys.exit(1)
