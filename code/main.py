@@ -34,13 +34,13 @@ if __name__ == "__main__":
         sys.exit(1)
 
     # Create output folder
-    folder = f'../output/{output_filename}'
+    # folder = f'../output/{output_filename}'
 
-    if not os.path.exists(folder):
-        os.mkdir(folder)
-    else:
-        print("Please specify a unique output filename.")
-        sys.exit(1)
+    # if not os.path.exists(folder):
+    #     os.mkdir(folder)
+    # else:
+    #     print("Please specify a unique output filename.")
+    #     sys.exit(1)
     
     if (algorithm == "random"):
         # Run random algorithm

@@ -4,10 +4,9 @@ sys.path.append("../classes")
 from typing import Optional
 import operator
 
-from chip import Chip
-from gate import Gate
-from wire import Wire
-
+from classes.chip import Chip
+from classes.gate import Gate
+from classes.wire import Wire
 
 class WireSegment:
     
@@ -84,7 +83,7 @@ class AstarAlg:
         for direction in directions:
             grid_upperbounds = self.chip.grid.get_grid_size()
 
-            # Check if this direction is within the grid
+            # Check if this direction is outside the grid
             if direction[0] > grid_upperbounds[0] or direction[1] > grid_upperbounds[1] or direction[2] > grid_upperbounds[2] or direction[0] < 0 or direction[1] < 0 or direction[2] < 0:
                 continue
 
@@ -141,19 +140,30 @@ class AstarAlg:
         open_list.append(mother_segment)
 
         while len(open_list) > 0:
-            # Sort open list on segment cost 
-            open_list.sort(key=lambda x: x.total_cost, reverse = True)
+            # # Sort open list on segment cost 
+            # open_list.sort(key=lambda x: x.total_cost, reverse = True)
 
-            #     print(f"Lowest {open_list[len(open_list) - 1].total_cost}")
+            # #     print(f"Lowest {open_list[len(open_list) - 1].total_cost}")
+            # print(f"Open {open_list[-5:]}")
 
             # Set the current segment to the lowest sum segment
-            current_segment = open_list[len(open_list) - 1]
+            # current_segment = open_list[len(open_list) - 1]
 
             #print(current_segment.position)
 
-            # Add current lowest value (current) segment to closed list
-            open_list.pop()
+            current_segment = open_list[0]
+            current_index = 0
+            for index, item in enumerate(open_list):
+                if item.total_cost < current_segment.total_cost:
+                    current_segment = item
+                    current_index = index
+
+            open_list.pop(current_index)
             closed_list.append(current_segment)
+
+            # Add current lowest value (current) segment to closed list
+            # open_list.pop()
+            # closed_list.append(current_segment)
 
             # Check if father is reached
             completed, wire_path = self.check_if_wire_completed(current_segment, father_segment)
@@ -164,6 +174,7 @@ class AstarAlg:
 
             # Get all next possible segments
             next_segments = self.create_next_segments(current_segment, father_coords)
+            #print(next_segments)
 
             # Loop through possible next segments to see if they are valid and better
             for segment in next_segments:
@@ -174,6 +185,8 @@ class AstarAlg:
                     if segment == closed_segment:
                         print("already in closed")
                         go_next = True
+                    else:
+                        print("not in closed")
                 if go_next:
                     continue
 
