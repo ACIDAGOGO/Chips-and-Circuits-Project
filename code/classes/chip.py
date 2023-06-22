@@ -27,6 +27,8 @@ class Chip:
         self.cost: int = 0
         self.intersectioncount: int = 0
         self.wirecount: int = 0
+        self.iteration_duration: float = 0
+        self.cumulative_duration: float = 0
 
     def fill_grid(self) -> None:
         """

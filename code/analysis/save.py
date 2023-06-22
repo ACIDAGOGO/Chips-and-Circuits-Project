@@ -15,6 +15,8 @@ def extract_data(chip: 'Chip') -> list[int]:
     data.append(int(chip.cost))
     data.append(int(chip.wirecount))
     data.append(int(chip.intersectioncount))
+    data.append(float(chip.iteration_duration))
+    data.append(float(chip.cumulative_duration))
 
     return data
 
@@ -29,6 +31,6 @@ def save_to_file(chip: 'Chip', output_filename: str):
     with open(f'../output/{output_filename}.csv', "a", newline="") as file:
         writer = csv.writer(file)
         if data[0] == 0:
-            writer.writerow(["iteration", "cost", "wirecount", "intersectioncount"])
+            writer.writerow(["iteration", "cost", "wirecount", "intersectioncount", "time_per_iteration", "cumulative_time"])
 
         writer.writerow(data)

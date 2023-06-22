@@ -1,3 +1,4 @@
+import time
 import sys
 sys.path.append("../analysis")
 sys.path.append("../classes")
@@ -22,17 +23,21 @@ class HillClimber:
     def run(self):
         for mother in self.chip.gates.values():
             for father in mother.get_destinations():
-                ##### deepcopy
                 new_wire = Wire(mother, father)
                 self.chip.add_wire(new_wire)
-                # print(f'WIRE ORIGIN: {new_wire.mother.get_id()} DESTINATION: {new_wire.father.get_id()}')
                 lay_wire(new_wire, self.chip.grid)
                 
                 while (new_wire.get_current_position() != new_wire.father.get_coords()):
                     random_reassign_wire(new_wire, self.chip.grid)
         self.costs = self.chip.calculate_costs()
 
-        iteration = 0
+        # Writing original chip data to CSV file
+        save_to_file(self.chip, self.output_filename)
+
+        iteration: int = 0
+
+        # Start timer
+        start_time: float = time.time()
 
         while (True):
             try:
@@ -42,19 +47,10 @@ class HillClimber:
                         wire_copy = chip_copy.wires[wire]
                         random_reassign_wire(wire_copy, chip_copy.grid)
                         while (wire_copy.get_current_position() != wire_copy.father.get_coords()):
-                            #print(len(wire_copy.path))
                             random_reassign_wire(wire_copy, chip_copy.grid)
-                            #print(wire_copy.path)
                         
                         copy_cost = chip_copy.calculate_costs()
-                        print(f'copy: {copy_cost}')
                         current_cost = self.chip.calculate_costs()
-
-                        # SHIT CODE: WTF ZIJN DIE ITERATIONS? t werkt wel maar ziet er kut uit               
-                        if (iteration == 0 and self.chip.iteration == 0):
-                            # Save first chip data to file
-                            save_to_file(self.chip, self.output_filename)
-                            self.chip.iteration += 1
                         
                         if (copy_cost < current_cost):
                             
@@ -67,13 +63,23 @@ class HillClimber:
                             # Update chip iteration number
                             self.chip.iteration = iteration
 
-                            if (self.chip.iteration > 0):
-                                # Save relevant chip data to file
-                                save_to_file(self.chip, self.output_filename)                  
+                            # Get time for completed iteration
+                            completed_iteration_time = time.time()
+
+                            # Calculate duration of iteration
+                            self.chip.iteration_duration = completed_iteration_time - start_time
+
+                            # Update cumulative iteration duration
+                            self.chip.cumulative_duration += self.chip.iteration_duration
+
+                            # Reset timer
+                            start_time = time.time()
+
+                            # Save relevant chip data to file
+                            save_to_file(self.chip, self.output_filename)                  
 
             except KeyboardInterrupt:
                 break
-        print(f"current: {current_cost}")
 
         return self.chip
 
