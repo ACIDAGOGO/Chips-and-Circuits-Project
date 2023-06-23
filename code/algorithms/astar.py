@@ -197,10 +197,21 @@ class AstarAlg:
                 self.assign_next_segment_costs(segment, father_coords)
 
                 # Skip segment if it is already in open list and has a higher cost
-                for open_segment in open_list:
-                    if segment == open_segment and segment.wire_cost > open_segment.wire_cost:
+                # for open_segment in open_list:
+                #     if segment == open_segment and segment.wire_cost > open_segment.wire_cost:
+                #         #print("already in open")
+                #         go_next = True
+                # if go_next:
+                #     continue
+
+                for index, open_segment in enumerate(open_list):
+                    if segment == open_segment:
+                        if segment.wire_cost > open_segment.wire_cost:
                         #print("already in open")
-                        go_next = True
+                            go_next = True
+                        else:
+                            open_list.pop(index)
+                            closed_list.append(open_segment)
                 if go_next:
                     continue
 
@@ -249,7 +260,7 @@ class AstarAlg:
 
         connections.sort(key=operator.itemgetter(2))
         
-        return connections
+        return connections[::-1]
 
     def run(self):
         # Start timer
@@ -282,6 +293,7 @@ class AstarAlg:
                 self.chip.add_wire(new_wire)
 
         total_time = time.time() - start_time
+        print(total_time)
 
         self.chip.iteration_duration = total_time
         self.chip.cumulative_duration += self.chip.iteration_duration
