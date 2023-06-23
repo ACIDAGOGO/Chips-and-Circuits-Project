@@ -1,5 +1,9 @@
-import time
 import sys
+import random
+import math
+import time
+
+from .hill_climber import HillClimber
 sys.path.append("../analysis")
 sys.path.append("../classes")
 sys.path.append("..")
@@ -13,46 +17,78 @@ from .random_alg import lay_wire, random_reassign_wire
 from analysis.save import save_to_file
 
 
-class HillClimber:
 
-    def __init__(self, chip_no: int, netlist_no: int, output_filename: str):
-        self.chip = Chip(chip_no, f"netlist_{netlist_no}.csv")
-        self.costs: int
-        self.output_filename: str = output_filename
+class SimulatedAnnealing(HillClimber):
 
-    def make_random_valid_solution(self) -> 'Chip':
+
+    def __init__(self, chip_no: int, netlist_no: int, output_filename: str, temp: int = 1000):
+        # Use init of hill_climber class
+        super().__init__(chip_no, netlist_no, output_filename)
+        #self.chip = Chip(chip_no, f"netlist_{netlist_no}.csv")
+
+        # Starting and current temperature
+        self.start_temp = temp
+        self.current_temp = temp
+        self.amount_of_tries: int = 30
+
+    def cool_down(self, amount_of_tries: int):
         """
-        Create one randomly solved chip for hill_climber to improve upon.
+        This function will make the temperature gradually cool down eventually becoming zero. 
+        When this has become zero, the function will just run like a regular hillclimber would.
         """
-        # Create the wires
-        for mother in self.chip.gates.values():
-            for father in mother.get_destinations():
-                new_wire = Wire(mother, father)
-                self.chip.add_wire(new_wire)
-                lay_wire(new_wire, self.chip.grid)
-                # Randomly lay wires until father gate is found
-                while (new_wire.get_current_position() != new_wire.father.get_coords()):
-                    random_reassign_wire(new_wire, self.chip.grid)
-        return(self.chip)
+
+        self.current_temp -= (self.start_temp / amount_of_tries)
+        print(self.current_temp)
     
-    def check_score(self, chip_copy: "Chip") -> bool:
+
+    def check_solution_not_perfect(self, chip_copy: "Chip"):
         """
-        Checks and updates a better chip and thus a better score
+        Checks for a better solution and updates the chip likewise.
+        Will sometimes accept a worse chip, depending on the current temperature.
+        A higher temperature will increase the chances of accepting a worse chip.
         """
+
         # Cost of the chip after placing a new wire
         copy_cost = chip_copy.calculate_costs()
         # Update cost of the original chip
         self.costs = self.chip.calculate_costs()
-                        
-        if (copy_cost < self.costs):
-            # Update chip to better version
+
+        # difference between the new and old chip's costs
+        difference: int = copy_cost - self.costs
+
+        if (difference < 0):
+            self.chip = chip_copy
+            return True
+
+        if (self.current_temp <= 0):
+            chance = 0
+        else:
+            # Calculate probability of accepting new graph;
+            # the larger the difference the smaller the chance
+            chance = math.exp(- difference / self.current_temp)
+
+        # Note that if the difference is positive and the costs are worse,
+        # chance will become small.
+        # A negative difference will result in a chance greater than 1
+        # and will therefore always be accepted.
+
+        # Turn the temperature down
+        self.cool_down(self.amount_of_tries)
+
+        # Amount of tries goes down by one
+        if (self.amount_of_tries != 1):
+            self.amount_of_tries -= 1
+
+        # randomly choose whether we will accept the chip
+        print(chance)
+        if random.random() < chance:
+            print(f"random {random.random()}")
             self.chip = chip_copy
             return True
         
         return False
-        
     
-    def run(self):
+    def run_sim_annealing(self):
         # Get one valid solution
         self.make_random_valid_solution()
 
@@ -81,7 +117,7 @@ class HillClimber:
                             random_reassign_wire(wire_copy, chip_copy.grid)
                         
                         # Check for a better solution
-                        if (self.check_score(chip_copy)):
+                        if (self.check_solution_not_perfect(chip_copy)):
 
                             # Update algorithm iteration number
                             iteration += 1
@@ -108,3 +144,7 @@ class HillClimber:
                 break
 
         return self.chip     
+        
+        
+        
+

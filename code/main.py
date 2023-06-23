@@ -7,6 +7,7 @@ sys.path.append("visualisation")
 from visualisation.visualiser import visualise
 import algorithms.random_alg
 from algorithms.hill_climber import HillClimber
+from algorithms.simulated_annealing import SimulatedAnnealing as sa
 from algorithms.astar import AstarAlg
 
 if __name__ == "__main__":
@@ -53,6 +54,11 @@ if __name__ == "__main__":
         hillclimber = HillClimber(chip_number, netlist_number, output_filename)
         chip = hillclimber.run()
         visualise(chip, algorithm, output_filename)
+    elif (algorithm == "simulatedannealing"):
+        # Run Simulated Annealing algorithm
+        print("Start Simulated Annealing") 
+        sim_annealing = sa(chip_number, netlist_number, output_filename, temp= 100000)
+        sim_annealing.run_sim_annealing()
     elif (algorithm == "astar"):
         print("Start A*")
         astar = AstarAlg(chip_number, netlist_number, output_filename)
