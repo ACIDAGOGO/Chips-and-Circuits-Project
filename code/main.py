@@ -58,15 +58,13 @@ if __name__ == "__main__":
         hillclimber = HillClimber(chip_number, netlist_number, output_filename)
         chip = hillclimber.run()
         visualise(chip, algorithm, output_filename)
-<<<<<<< HEAD
+        
     elif (algorithm == "simulatedannealing"):
         # Run Simulated Annealing algorithm
         print("Start Simulated Annealing") 
         sim_annealing = sa(chip_number, netlist_number, output_filename, temp= 100000)
         sim_annealing.run_sim_annealing()
-=======
 
->>>>>>> 1603ae9e78b6f3e47f913157609cface59564bd2
     elif (algorithm == "astar"):
         print("Start A*")
         astar = AstarAlg(chip_number, netlist_number, output_filename)
