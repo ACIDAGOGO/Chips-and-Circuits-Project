@@ -20,18 +20,26 @@ class HillClimber:
         self.costs: int
         self.output_filename: str = output_filename
 
-    def run(self):
+    def make_random_valid_solution(self) -> 'Chip':
+        """
+        Create one randomly solved chip for hill_climber to improve upon.
+        """
+        # Create the wires
         for mother in self.chip.gates.values():
             for father in mother.get_destinations():
                 new_wire = Wire(mother, father)
                 self.chip.add_wire(new_wire)
                 lay_wire(new_wire, self.chip.grid)
-                
+                # Randomly lay wires until father gate is found
                 while (new_wire.get_current_position() != new_wire.father.get_coords()):
                     random_reassign_wire(new_wire, self.chip.grid)
-        self.costs = self.chip.calculate_costs()
+        return(self.chip)
+    
+    def run(self):
+        # Get one valid solution
+        self.make_random_valid_solution()
 
-        # Writing original chip data to CSV file
+        # Writing original solved chip data to CSV file
         save_to_file(self.chip, self.output_filename)
 
         iteration: int = 0
@@ -41,18 +49,26 @@ class HillClimber:
 
         while (True):
             try:
+                # Go through all the wires
                 for wire in range(len(self.chip.wires)):
+                    # Try and improve the wire a thousand times
                     for _ in range(1000):
+                        # Copy the original chip
                         chip_copy = copy.deepcopy(self.chip)
+                        # Copy the current wire
                         wire_copy = chip_copy.wires[wire]
+                        # Randomly replace the wire
                         random_reassign_wire(wire_copy, chip_copy.grid)
+                        # Find a new valid solution
                         while (wire_copy.get_current_position() != wire_copy.father.get_coords()):
                             random_reassign_wire(wire_copy, chip_copy.grid)
                         
+                        # Cost of the chip after placing a new wire
                         copy_cost = chip_copy.calculate_costs()
-                        current_cost = self.chip.calculate_costs()
+                        # Update cost of the original chip
+                        self.costs = self.chip.calculate_costs()
                         
-                        if (copy_cost < current_cost):
+                        if (copy_cost < self.costs):
                             
                             # Update chip to better version
                             self.chip = chip_copy
@@ -81,26 +97,4 @@ class HillClimber:
             except KeyboardInterrupt:
                 break
 
-        return self.chip
-
-
-        # for wire in self.chip.wires:
-        #     for _ in range(10):
-        #         chip_copy = copy.deepcopy(self.chip)
-        #         random_reassign_wire(wire, self.chip.grid)
-        #         while (wire.get_current_position() != wire.father.get_coords()):
-        #             random_reassign_wire(wire, self.chip.grid)
-                
-        #         copy_cost = chip_copy.calculate_costs()
-        #         print(f'copy: {copy_cost}')
-        #         current_cost = self.chip.calculate_costs()
-
-        #         if (current_cost > copy_cost):
-        #             self.chip = chip_copy
-                
-        #         print(f"current: {current_cost}")
-
-                
-                
-        
-        
+        return self.chip     
