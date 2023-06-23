@@ -87,6 +87,6 @@ def visualise(chip: 'Chip', algorithm: str, output_filename: str) -> None:
     ax.set_zticks(range(0, z + 1))
 
     # Save visualisation to file in output folder
-    fig.savefig(f'../output/{output_filename}/{output_filename}.png', bbox_inches='tight', pad_inches=1, dpi=300)
+    fig.savefig(f'../output/{output_filename}/{output_filename}_visualisation.png', bbox_inches='tight', pad_inches=1, dpi=300)
 
-    plt.show()
+    # plt.show()

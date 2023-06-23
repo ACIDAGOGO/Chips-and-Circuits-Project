@@ -22,48 +22,48 @@ def calculate_optimal_bin_width(data: list[int]) -> int:
     return bin_width
 
 
-if __name__ == "__main__":
+# if __name__ == "__main__":
 
-    # Check if at least three command-line arguments are provided
-    if len(sys.argv) >= 2:
-        filename: str = sys.argv[1]
-        filepath: str = f"../../output/{os.path.splitext(filename)}/{filename}"
+#     # Check if at least three command-line arguments are provided
+#     if len(sys.argv) >= 2:
+#         filename: str = sys.argv[1]
+#         filepath: str = f"../../output/{os.path.splitext(filename)}/{filename}"
 
-    else:
-        print("Insufficient command-line arguments. Please provide at least one argument: filename.")
-        sys.exit(1)
+#     else:
+#         print("Insufficient command-line arguments. Please provide at least one argument: filename.")
+#         sys.exit(1)
 
-    # Set up empty data containers
-    iterations: list[int] = []
-    costs: list[int] = []
-    wirecounts: list[int] = []
-    intersectioncounts: list[int] = []
+#     # Set up empty data containers
+#     iterations: list[int] = []
+#     costs: list[int] = []
+#     wirecounts: list[int] = []
+#     intersectioncounts: list[int] = []
 
-    with open(filepath) as file:
-        reader = csv.reader(file)
+#     with open(filepath) as file:
+#         reader = csv.reader(file)
 
-        # Skip the first line
-        next(reader)
+#         # Skip the first line
+#         next(reader)
 
-        # Iterate over the csv file
-        for row in reader:
+#         # Iterate over the csv file
+#         for row in reader:
 
-            # Load data
-            iterations.append(int(row[0]))
-            costs.append(int(row[1]))
-            wirecounts.append(int(row[2]))
-            intersectioncounts.append(int(row[3]))
+#             # Load data
+#             iterations.append(int(row[0]))
+#             costs.append(int(row[1]))
+#             wirecounts.append(int(row[2]))
+#             intersectioncounts.append(int(row[3]))
 
-    # Get optimal bin width
-    bin_width = calculate_optimal_bin_width(costs)
+#     # Get optimal bin width
+#     bin_width = calculate_optimal_bin_width(costs)
 
-    # Plot histogram of total number of wire intersection
-    plt.hist(costs, bins=range(min(costs), max(costs) + bin_width, bin_width), linewidth=1.2, edgecolor='black')
-    plt.suptitle(f"Frequency of total chip costs over {len(iterations)} iterations", fontsize=12)
-    plt.title(f"Mean = {round(statistics.mean(costs))}, Min = {min(costs)}, Max = {max(costs)}", fontsize=10)
-    plt.xlabel("Total cost of chip configuration")
-    plt.ylabel("Frequency")
-    plt.show()
+#     # Plot histogram of total costs over all iterations (suitable for random algorithm data)
+#     plt.hist(costs, bins=range(min(costs), max(costs) + bin_width, bin_width), linewidth=1.2, edgecolor='black')
+#     plt.suptitle(f"Frequency of total chip costs over {len(iterations)} iterations", fontsize=12)
+#     plt.title(f"Mean = {round(statistics.mean(costs))}, Min = {min(costs)}, Max = {max(costs)}", fontsize=10)
+#     plt.xlabel("Total cost of chip configuration")
+#     plt.ylabel("Frequency")
+#     plt.show()
 
     # # Plot histogram of total number of wire intersection
     # bin_width, num_bins = calculate_optimal_bins(intersectioncounts)
@@ -86,5 +86,54 @@ if __name__ == "__main__":
     # plt.show()
 
     # Scatter plot to show how costs decline after a certain amount of iterations
-    plt.scatter(iterations, costs)
-    plt.show()
+    # plt.scatter(iterations, costs)
+    # plt.show()
+
+def load_data(output_filename: str) -> tuple[list[int], list[int], list[int], list[int], list[float], list[float]]:
+    filename: str = output_filename
+    filepath: str = f"./../output/{filename}/{filename}.csv"
+
+    # Set up empty data containers
+    iterations: list[int] = []
+    costs: list[int] = []
+    wirecounts: list[int] = []
+    intersectioncounts: list[int] = []
+    time_per_iteration: list[float] = []
+    cumulative_time: list[float] = []
+
+    with open(filepath) as file:
+        reader = csv.reader(file)
+
+        # Skip the first line
+        next(reader)
+
+        # Iterate over the csv file
+        for row in reader:
+
+            # Load data into lists
+            iterations.append(int(row[0]))
+            costs.append(int(row[1]))
+            wirecounts.append(int(row[2]))
+            intersectioncounts.append(int(row[3]))
+            time_per_iteration.append(float(row[4]))
+            cumulative_time.append(float(row[5]))
+
+    return iterations, costs, wirecounts, intersectioncounts, time_per_iteration, cumulative_time
+
+# Only suitable for random algorithm data
+def create_histogram(output_filename: str):
+    # Get costs data
+    data = load_data(output_filename)
+    costs = data[1]
+    iterations = data[0]
+
+    # Get optimal bin width
+    bin_width = calculate_optimal_bin_width(costs)
+
+    # Plot histogram of total costs over all iterations (suitable for random algorithm data)
+    plt.figure(figsize=(8,8))
+    plt.hist(costs, bins=range(min(costs), max(costs) + bin_width, bin_width), linewidth=1.2, edgecolor='black')
+    plt.title(f"Frequency of total chip costs over {len(iterations)} iterations (Random Algorithm)\nMean = {round(statistics.mean(costs))}, Min = {min(costs)}, Max = {max(costs)}", fontsize=15)
+    plt.xlabel("Total cost of chip configuration", fontsize=12)
+    plt.ylabel("Frequency", fontsize=12)
+    plt.savefig(f'./../output/{output_filename}/{output_filename}_histogram.png', bbox_inches='tight', pad_inches=1, dpi=300)
