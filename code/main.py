@@ -3,11 +3,13 @@ import os
 sys.path.append("algorithms")
 sys.path.append("classes")
 sys.path.append("visualisation")
+sys.path.append("analysis")
 
 from visualisation.visualiser import visualise
-import algorithms.random_alg
+from algorithms.random_alg import *
 from algorithms.hill_climber import HillClimber
 from algorithms.astar import AstarAlg
+from analysis.analyse import *
 
 if __name__ == "__main__":
     
@@ -45,19 +47,23 @@ if __name__ == "__main__":
     if (algorithm == "random"):
         # Run random algorithm
         print("Start Random")
-        chip = random_alg.run_random(chip_number, netlist_number, output_filename)
+        chip = run_random(chip_number, netlist_number, output_filename)
         visualise(chip, algorithm, output_filename)
+        create_histogram(output_filename)
+
     elif (algorithm == "hillclimber"):
         # Run Hill Climber algorithm
         print("Start Hill Climber")
         hillclimber = HillClimber(chip_number, netlist_number, output_filename)
         chip = hillclimber.run()
         visualise(chip, algorithm, output_filename)
+
     elif (algorithm == "astar"):
         print("Start A*")
         astar = AstarAlg(chip_number, netlist_number, output_filename)
         chip = astar.chip
         visualise(chip, algorithm, output_filename)
+
     else:
         print("Invalid algorithm: Choose from random, hillclimber or astar")
         sys.exit(1)
