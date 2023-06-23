@@ -67,7 +67,7 @@ if __name__ == "__main__":
 
     elif (algorithm == "astar"):
         print("Start A*")
-        astar = AstarAlg(chip_number, netlist_number, output_filename)
+        astar = AstarAlg(chip_number, netlist_number, output_filename, None)
         chip = astar.chip
         visualise(chip, algorithm, output_filename)
 

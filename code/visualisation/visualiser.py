@@ -89,4 +89,4 @@ def visualise(chip: 'Chip', algorithm: str, output_filename: str) -> None:
     # Save visualisation to file in output folder
     fig.savefig(f'../output/{output_filename}/{output_filename}_visualisation.png', bbox_inches='tight', pad_inches=1, dpi=300)
 
-    # plt.show()
+    plt.show()

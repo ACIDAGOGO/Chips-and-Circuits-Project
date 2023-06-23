@@ -40,56 +40,16 @@ class WireSegment:
     
     def __repr__(self) -> str:
         return f"{self.position}"
-    
-
-class Heuristics:
-    """ Implements an easy way to apply extra heurstics to the A* algorithm. These heuristics influence which paths
-        are prioritized (seen as "cheaper") when laying wire segments by setting the cost of making certain moves 
-    """
-
-    def __init__(self, heuristic: str = None):
-        self.heuristic = heuristic
-
-    def calculate_manhattan_distance(self, segment_coords: tuple[int, int, int], father_coords: tuple[int, int, int]):
-        """ Returns the manhattan distance between two points """
-
-        manhattan_distance = abs(segment_coords[0] - father_coords[0]) + abs(segment_coords[1] - father_coords[1]) + abs(segment_coords[2] - father_coords[2])
-
-        return manhattan_distance
-    
-    def no_heuristics(self, chip: "Chip", next_segment: "WireSegment", father_coords: tuple[int, int, int]):
-        """ Default A*, only takes wire intersection costs into account """
-
-        # Check if position already contains a wire segment and assign wire cost
-        if (chip.grid.values[next_segment.get_z()][next_segment.get_y()][next_segment.get_x()] <= -1):
-            next_segment.wire_cost += 300
-        else:
-            next_segment.wire_cost += 1
-        
-        # Assign manhattan distance cost
-        manhattan_distance = self.calculate_manhattan_distance(next_segment.position, father_coords)
-        next_segment.manhattan_cost = manhattan_distance
-
-        # Assign total cost
-        next_segment.total_cost = next_segment.wire_cost + manhattan_distance
-
-    def assign_next_segment_costs(self, chip: "Chip", next_segment: "WireSegment", father_coords: tuple[int, int, int]):
-        """ Determines and assigns the cost of using a wire segment to the object """
-
-        """ Apply different costs based on chosen heuristic """
-        if (self.heuristic == None):
-            self.no_heuristics(chip, next_segment, father_coords)
 
 
 class AstarAlg:
     """ Implements the A* pathfinding algorithms, this algrotihm determines the cheapest path between two gates in on the grid of a chip.
-        AstarAlg is initialized with a chip numbr, netlist number and filename to output to.
+        AstarAlg is initialized with a chip numbr, netlist number and filename to output to
     """
 
-    def __init__(self, chip_no: int, netlist_no: int, output_filename: str, heuristic: str):
+    def __init__(self, chip_no: int, netlist_no: int, output_filename: str):
         self.chip = Chip(chip_no, f"netlist_{netlist_no}.csv")
         self.output_filename = output_filename
-        self.heuristic = Heuristics(heuristic)
         self.run()
 
     def create_parent_segments(self, mother_coords: tuple[int, int, int], father_coords: tuple[int, int, int]) -> tuple["WireSegment", "WireSegment"]:
@@ -182,28 +142,28 @@ class AstarAlg:
 
         return next_segments
     
-    # def calculate_manhattan_distance(self, segment_coords: tuple[int, int, int], father_coords: tuple[int, int, int]):
-    #     """ Returns the manhattan distance between two points """
+    def calculate_manhattan_distance(self, segment_coords: tuple[int, int, int], father_coords: tuple[int, int, int]):
+        """ Returns the manhattan distance between two points """
 
-    #     manhattan_distance = abs(segment_coords[0] - father_coords[0]) + abs(segment_coords[1] - father_coords[1]) + abs(segment_coords[2] - father_coords[2])
+        manhattan_distance = abs(segment_coords[0] - father_coords[0]) + abs(segment_coords[1] - father_coords[1]) + abs(segment_coords[2] - father_coords[2])
 
-    #     return manhattan_distance
+        return manhattan_distance
     
-    # def assign_next_segment_costs(self, next_segment: "WireSegment", father_coords: tuple[int, int, int]):
-    #     """ Determines and assigns the cost of using a wire segment to the object """
+    def assign_next_segment_costs(self, next_segment: "WireSegment", father_coords: tuple[int, int, int]):
+        """ Determines and assigns the cost of using a wire segment to the object """
 
-    #     # Check if position already contains a wire segment and assign wire cost
-    #     if (self.chip.grid.values[next_segment.get_z()][next_segment.get_y()][next_segment.get_x()] <= -1):
-    #         next_segment.wire_cost += 300
-    #     else:
-    #         next_segment.wire_cost += 1
+        # Check if position already contains a wire segment and assign wire cost
+        if (self.chip.grid.values[next_segment.get_z()][next_segment.get_y()][next_segment.get_x()] <= -1):
+            next_segment.wire_cost += 300
+        else:
+            next_segment.wire_cost += 1
         
-    #     # Assign manhattan distance cost
-    #     manhattan_distance = self.calculate_manhattan_distance(next_segment.position, father_coords)
-    #     next_segment.manhattan_cost = manhattan_distance
+        # Assign manhattan distance cost
+        manhattan_distance = self.calculate_manhattan_distance(next_segment.position, father_coords)
+        next_segment.manhattan_cost = manhattan_distance
 
-    #     # Assign total cost
-    #     next_segment.total_cost = next_segment.wire_cost + manhattan_distance
+        # Assign total cost
+        next_segment.total_cost = next_segment.wire_cost + manhattan_distance
 
     def draw_wire(self, mother: "Gate", father: "Gate"):
         """ Determines the shortest path between two points and draws the wire """
@@ -264,7 +224,7 @@ class AstarAlg:
                     continue
 
                 # Assign costs to the next segment
-                self.heuristic.assign_next_segment_costs(self.chip, segment, father_coords)
+                self.assign_next_segment_costs(segment, father_coords)
 
                 # Check if possible next segment already in open list
                 for index, open_segment in enumerate(open_list):
@@ -291,7 +251,7 @@ class AstarAlg:
         connections: list[tuple["Gate", "Gate", int]] = []
         for mother in self.chip.gates.values():
             for father in mother.get_destinations():
-                manhattan_distance = self.heuristic.calculate_manhattan_distance(mother.get_coords(), father.get_coords())
+                manhattan_distance = self.calculate_manhattan_distance(mother.get_coords(), father.get_coords())
                 connections.append((mother, father, manhattan_distance))
 
         #connections.sort(key=operator.itemgetter(2))
