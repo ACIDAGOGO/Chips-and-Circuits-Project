@@ -12,7 +12,7 @@ import copy
 import random
 from classes.chip import Chip
 from classes.wire import Wire
-from .random_alg import lay_wire, random_reassign_wire
+from .random_alg import random_reassign_wire
 
 from analysis.save import save_to_file
 
@@ -36,10 +36,7 @@ class SimulatedAnnealing(HillClimber):
         This function will make the temperature gradually cool down eventually becoming zero. 
         When this has become zero, the function will just run like a regular hillclimber would.
         """
-
-        self.current_temp -= (self.start_temp / amount_of_tries)
-        print(self.current_temp)
-    
+        self.current_temp -= (self.start_temp / amount_of_tries)   
 
     def check_solution_not_perfect(self, chip_copy: "Chip"):
         """
@@ -53,13 +50,16 @@ class SimulatedAnnealing(HillClimber):
         # Update cost of the original chip
         self.costs = self.chip.calculate_costs()
 
-        # difference between the new and old chip's costs
+        # Difference between the new and old chip's costs
         difference: int = copy_cost - self.costs
 
+        # Always update if a better chip is found
         if (difference < 0):
             self.chip = chip_copy
             return True
 
+        # Make sure that when the temperature is below zero,
+        # the chance of accepting a worse chip becomes zero
         if (self.current_temp <= 0):
             chance = 0
         else:
@@ -80,9 +80,7 @@ class SimulatedAnnealing(HillClimber):
             self.amount_of_tries -= 1
 
         # randomly choose whether we will accept the chip
-        print(chance)
         if random.random() < chance:
-            print(f"random {random.random()}")
             self.chip = chip_copy
             return True
         
@@ -144,7 +142,3 @@ class SimulatedAnnealing(HillClimber):
                 break
 
         return self.chip     
-        
-        
-        
-
