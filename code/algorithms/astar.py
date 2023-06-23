@@ -1,12 +1,15 @@
 import sys
 sys.path.insert(0, "../classes")
 
+import time
+
 from typing import Optional
 import operator
 
 from classes.chip import Chip
 from classes.gate import Gate
 from classes.wire import Wire
+from analysis.save import save_to_file
 
 class WireSegment:
     
@@ -37,8 +40,9 @@ class WireSegment:
 
 class AstarAlg:
 
-    def __init__(self, chip_no: int, netlist_no: int):
+    def __init__(self, chip_no: int, netlist_no: int, output_filename: str):
         self.chip = Chip(chip_no, f"netlist_{netlist_no}.csv")
+        self.output_filename = output_filename
         self.run()
 
     def create_parent_segments(self, mother_coords: tuple[int, int, int], father_coords: tuple[int, int, int]) -> tuple["WireSegment", "WireSegment"]:
@@ -140,36 +144,37 @@ class AstarAlg:
         open_list.append(mother_segment)
 
         while len(open_list) > 0:
-            # # Sort open list on segment cost 
-            # open_list.sort(key=lambda x: x.total_cost, reverse = True)
+            # Sort open list on segment cost 
+            open_list.sort(key=lambda x: x.total_cost, reverse = True)
 
-            # #     print(f"Lowest {open_list[len(open_list) - 1].total_cost}")
+            #     print(f"Lowest {open_list[len(open_list) - 1].total_cost}")
             # print(f"Open {open_list[-5:]}")
 
             # Set the current segment to the lowest sum segment
-            # current_segment = open_list[len(open_list) - 1]
+            current_segment = open_list[len(open_list) - 1]
 
-            #print(current_segment.position)
-
-            current_segment = open_list[0]
-            current_index = 0
-            for index, item in enumerate(open_list):
-                if item.total_cost < current_segment.total_cost:
-                    current_segment = item
-                    current_index = index
-
-            open_list.pop(current_index)
-            closed_list.append(current_segment)
+            # print(current_segment.position)
 
             # Add current lowest value (current) segment to closed list
-            # open_list.pop()
+            open_list.pop()
+            closed_list.append(current_segment)
+
+            # current_segment = open_list[0]
+            # current_index = 0
+            # for index, item in enumerate(open_list):
+            #     if item.total_cost < current_segment.total_cost:
+            #         current_segment = item
+            #         current_index = index
+
+            # open_list.pop(current_index)
             # closed_list.append(current_segment)
+
 
             # Check if father is reached
             completed, wire_path = self.check_if_wire_completed(current_segment, father_segment)
             if (completed):
-                print(closed_list)
-                print(wire_path)
+                #print(closed_list)
+                #print(wire_path)
                 return wire_path
 
             # Get all next possible segments
@@ -183,10 +188,8 @@ class AstarAlg:
                 # Skip segment if it has already been passed
                 for closed_segment in closed_list:
                     if segment == closed_segment:
-                        print("already in closed")
+                        #print("already in closed")
                         go_next = True
-                    else:
-                        print("not in closed")
                 if go_next:
                     continue
 
@@ -196,7 +199,7 @@ class AstarAlg:
                 # Skip segment if it is already in open list and has a higher cost
                 for open_segment in open_list:
                     if segment == open_segment and segment.wire_cost > open_segment.wire_cost:
-                        print("already in open")
+                        #print("already in open")
                         go_next = True
                 if go_next:
                     continue
@@ -246,9 +249,12 @@ class AstarAlg:
 
         connections.sort(key=operator.itemgetter(2))
         
-        return connections[::-1]
+        return connections
 
     def run(self):
+        # Start timer
+        start_time: float = time.time()
+
         # Get sorted connections
         sorted_connections = self.sort_desired_connections()
         
@@ -259,10 +265,10 @@ class AstarAlg:
                 father = connection[1]
 
                 # Draw wire and get path
-                print(f"Drawing wire {wires_drawn}")
+                #print(f"Drawing wire {wires_drawn}")
                 wire_path = self.draw_wire(mother, father)
                 wires_drawn += 1
-                print("Wire complete")
+                #print("Wire complete")
 
                 # Create new wire object
                 new_wire = Wire(mother, father)
@@ -275,7 +281,16 @@ class AstarAlg:
                 # Add wire object to chip
                 self.chip.add_wire(new_wire)
 
-astar = AstarAlg(0, 1)
+        total_time = time.time() - start_time
+
+        self.chip.iteration_duration = total_time
+        self.chip.cumulative_duration += self.chip.iteration_duration
+
+        self.chip.calculate_costs()
+
+        # Save relevant chip data to file
+        save_to_file(self.chip, self.output_filename)
+
 # 1. Add the starting square (or node) to the open list.
 
 # 2. Repeat the following:

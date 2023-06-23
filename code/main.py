@@ -34,13 +34,13 @@ if __name__ == "__main__":
         sys.exit(1)
 
     # Create output folder
-    # folder = f'../output/{output_filename}'
+    folder = f'../output/{output_filename}'
 
-    # if not os.path.exists(folder):
-    #     os.mkdir(folder)
-    # else:
-    #     print("Please specify a unique output filename.")
-    #     sys.exit(1)
+    if not os.path.exists(folder):
+        os.mkdir(folder)
+    else:
+        print("Please specify a unique output filename.")
+        sys.exit(1)
     
     if (algorithm == "random"):
         # Run random algorithm
@@ -55,11 +55,9 @@ if __name__ == "__main__":
         visualise(chip, algorithm, output_filename)
     elif (algorithm == "astar"):
         print("Start A*")
-        astar = AstarAlg(chip_number, netlist_number)
+        astar = AstarAlg(chip_number, netlist_number, output_filename)
         chip = astar.chip
         visualise(chip, algorithm, output_filename)
     else:
         print("Invalid algorithm: Choose from random, hillclimber or astar")
         sys.exit(1)
-
-astar = AstarAlg(chip_number, netlist_number)
