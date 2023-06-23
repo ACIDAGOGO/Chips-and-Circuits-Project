@@ -35,6 +35,23 @@ class HillClimber:
                     random_reassign_wire(new_wire, self.chip.grid)
         return(self.chip)
     
+    def check_score(self, chip_copy: "Chip") -> bool:
+        """
+        Checks and updates a better score 
+        """
+        # Cost of the chip after placing a new wire
+        copy_cost = chip_copy.calculate_costs()
+        # Update cost of the original chip
+        self.costs = self.chip.calculate_costs()
+                        
+        if (copy_cost < self.costs):
+            # Update chip to better version
+            self.chip = chip_copy
+            return True
+        
+        return False
+        
+    
     def run(self):
         # Get one valid solution
         self.make_random_valid_solution()
@@ -63,15 +80,8 @@ class HillClimber:
                         while (wire_copy.get_current_position() != wire_copy.father.get_coords()):
                             random_reassign_wire(wire_copy, chip_copy.grid)
                         
-                        # Cost of the chip after placing a new wire
-                        copy_cost = chip_copy.calculate_costs()
-                        # Update cost of the original chip
-                        self.costs = self.chip.calculate_costs()
-                        
-                        if (copy_cost < self.costs):
-                            
-                            # Update chip to better version
-                            self.chip = chip_copy
+                        # Check for a better solution
+                        if (self.check_score(chip_copy)):
 
                             # Update algorithm iteration number
                             iteration += 1
