@@ -71,6 +71,10 @@ if __name__ == "__main__":
         chip = astar.chip
         visualise(chip, algorithm, output_filename)
 
+        astar = AstarAlg(chip_number, netlist_number, output_filename, "avoid_gates")
+        chip = astar.chip
+        visualise(chip, "avoid gates", output_filename)
+
     else:
         print("Invalid algorithm: Choose from random, hillclimber or astar")
         sys.exit(1)

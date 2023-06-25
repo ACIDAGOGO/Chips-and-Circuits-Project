@@ -1,2 +1,4 @@
 iteration,cost,wirecount,intersectioncount,time_per_iteration,cumulative_time
-0,22,22,0,0.0019888877868652344,0.0019888877868652344
+0,22,22,0,0.0029938220977783203,0.0029938220977783203
+iteration,cost,wirecount,intersectioncount,time_per_iteration,cumulative_time
+0,22,22,0,0.17448019981384277,0.17448019981384277

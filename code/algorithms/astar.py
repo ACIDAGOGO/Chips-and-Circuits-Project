@@ -57,7 +57,7 @@ class Heuristics:
 
         return manhattan_distance
     
-    def no_heuristics(self, chip: "Chip", next_segment: "WireSegment", father_coords: tuple[int, int, int]):
+    def default(self, chip: "Chip", next_segment: "WireSegment", father_coords: tuple[int, int, int]):
         """ Default A*, only takes wire intersection costs into account """
 
         # Check if position already contains a wire segment and assign wire cost
@@ -73,12 +73,26 @@ class Heuristics:
         # Assign total cost
         next_segment.total_cost = next_segment.wire_cost + manhattan_distance
 
-    def assign_next_segment_costs(self, chip: "Chip", next_segment: "WireSegment", father_coords: tuple[int, int, int]):
+    def avoid_gates(self, chip: "Chip", next_segment: "WireSegment", mother_coords: tuple[int, int, int], father_coords: tuple[int, int, int]):
+        segment_position = next_segment.position
+        grid_size = chip.grid.get_grid_size()
+        
+        avoid_distance = 2
+        for z in range(segment_position[2], segment_position[2] + avoid_distance + 1):
+            for y in range(segment_position[1], segment_position[1] + avoid_distance + 1):
+                for x in range(segment_position[0], segment_position[0] + avoid_distance + 1):
+                    if (x < grid_size[0] and y < grid_size[1] and z < grid_size[2]):
+                        if (chip.grid.values[z][y][x] > 0 and not (x,y,z) == mother_coords and not (x,y,z) == father_coords):
+                            next_segment.wire_cost += 50
+
+    def assign_next_segment_costs(self, chip: "Chip", next_segment: "WireSegment", mother_coords: tuple[int, int, int], father_coords: tuple[int, int, int]):
         """ Determines and assigns the cost of using a wire segment to the object """
 
-        """ Apply different costs based on chosen heuristic """
-        if (self.heuristic == None):
-            self.no_heuristics(chip, next_segment, father_coords)
+        # Apply different costs based on chosen heuristic
+        self.default(chip, next_segment, father_coords)
+        if (self.heuristic == "avoid_gates"):
+            self.avoid_gates(chip, next_segment, mother_coords, father_coords)
+            next_segment.total_cost = next_segment.wire_cost + next_segment.manhattan_cost
 
 
 class AstarAlg:
@@ -264,7 +278,7 @@ class AstarAlg:
                     continue
 
                 # Assign costs to the next segment
-                self.heuristic.assign_next_segment_costs(self.chip, segment, father_coords)
+                self.heuristic.assign_next_segment_costs(self.chip, segment, mother_coords, father_coords)
 
                 # Check if possible next segment already in open list
                 for index, open_segment in enumerate(open_list):
@@ -294,7 +308,7 @@ class AstarAlg:
                 manhattan_distance = self.heuristic.calculate_manhattan_distance(mother.get_coords(), father.get_coords())
                 connections.append((mother, father, manhattan_distance))
 
-        #connections.sort(key=operator.itemgetter(2))
+        connections.sort(key=operator.itemgetter(2))
         
         return connections
 
