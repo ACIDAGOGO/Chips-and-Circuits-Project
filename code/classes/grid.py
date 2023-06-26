@@ -32,13 +32,13 @@ class Grid:
     
     def initialize_grid(self) -> Any:
         """
-        Create grid in 2d array
+        Create grid in 3d array
         """
 
         # Creates grid with zeros with aspect ratio self.x, self.y
         grid = np.zeros((self.grid_z + 1, self.grid_y + 1, self.grid_x + 1))
+        print(grid)
 
-        #grid = np.flipud(grid)
         return grid
 
     def check_for_illegal_gate(self, position: tuple[int, int, int], father: 'Gate') -> bool:
