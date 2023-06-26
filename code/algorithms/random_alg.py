@@ -4,7 +4,6 @@ sys.path.append("../classes")
 
 import random
 import copy
-import matplotlib.pyplot as plt
 from classes.grid import Grid
 from classes.wire import Wire
 from classes.chip import Chip
@@ -16,6 +15,7 @@ max_tries: int = 1000
 counter: int = 0
 tries_counter: int = 0
 
+
 def is_move_valid(wire: 'Wire', grid: 'Grid', desired_position: tuple[int, int, int]) -> bool:
     global counter
     global tries_counter
@@ -23,9 +23,9 @@ def is_move_valid(wire: 'Wire', grid: 'Grid', desired_position: tuple[int, int, 
     grid_upperbounds = grid.get_grid_size()
 
     if desired_position[0] > grid_upperbounds[0] or desired_position[1] > grid_upperbounds[1] or desired_position[2] > grid_upperbounds[2] or desired_position[0] < 0 or desired_position[1] < 0 or desired_position[2] < 0:
-            counter += 1
-            tries_counter += 1
-            return False
+        counter += 1
+        tries_counter += 1
+        return False
 
     foreign_gate: bool = grid.check_for_illegal_gate(desired_position, wire.father)
 
@@ -41,6 +41,7 @@ def is_move_valid(wire: 'Wire', grid: 'Grid', desired_position: tuple[int, int, 
         counter = 0
         return True
 
+
 def get_random_direction(wire: 'Wire') -> tuple[int, int, int]:
     current_position = wire.get_current_position()
     current_position_x = current_position[0]
@@ -49,9 +50,10 @@ def get_random_direction(wire: 'Wire') -> tuple[int, int, int]:
 
     possible_directions: list[tuple[int, int, int]] = [(current_position_x + 1, current_position_y, current_position_z), (current_position_x - 1, current_position_y, current_position_z), (current_position_x, current_position_y + 1, current_position_z), (current_position_x, current_position_y - 1, current_position_z), (current_position_x, current_position_y, current_position_z + 1), (current_position_x, current_position_y, current_position_z - 1)]
 
-    random_direction: tuple[int, int] = random.choice(possible_directions)
+    random_direction: tuple[int, int, int] = random.choice(possible_directions)
 
     return random_direction
+
 
 def lay_wire(wire: 'Wire', grid: 'Grid') -> None:
     global counter
@@ -64,6 +66,7 @@ def lay_wire(wire: 'Wire', grid: 'Grid') -> None:
             if (random_direction != wire.father.get_coords()):
                 grid.values[random_direction[2]][random_direction[1]][random_direction[0]] -= 1
 
+
 def random_reassign_wire(new_wire: "Wire", grid: "Grid"):
     # Trace back wire
     for unit in range(len(new_wire.get_path()) - 1):
@@ -75,6 +78,7 @@ def random_reassign_wire(new_wire: "Wire", grid: "Grid"):
 
     # Start a new wire
     lay_wire(new_wire, grid)
+
 
 def run_random(chip_no: int, netlist_no: int, output_filename: str) -> 'Chip':
     iteration = 0
@@ -94,7 +98,7 @@ def run_random(chip_no: int, netlist_no: int, output_filename: str) -> 'Chip':
                     while (new_wire.get_current_position() != new_wire.father.get_coords()):
                         random_reassign_wire(new_wire, chip.grid)
 
-            # Calculate total cost of chip       
+            # Calculate total cost of chip
             total_costs = chip.calculate_costs()
 
             # Remeber cheapest chip configuration
@@ -103,7 +107,6 @@ def run_random(chip_no: int, netlist_no: int, output_filename: str) -> 'Chip':
             else:
                 if (total_costs < best_chip.calculate_costs()):
                     best_chip = copy.deepcopy(chip)
-
 
             # DEBUG
             print(f'COST:{total_costs}')
@@ -119,4 +122,3 @@ def run_random(chip_no: int, netlist_no: int, output_filename: str) -> 'Chip':
             break
 
     return best_chip
-

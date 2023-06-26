@@ -5,7 +5,6 @@ sys.path.append("../classes")
 sys.path.append("..")
 
 import copy
-import random
 from classes.chip import Chip
 from classes.wire import Wire
 from .random_alg import lay_wire, random_reassign_wire
@@ -33,8 +32,8 @@ class HillClimber:
                 # Randomly lay wires until father gate is found
                 while (new_wire.get_current_position() != new_wire.father.get_coords()):
                     random_reassign_wire(new_wire, self.chip.grid)
-        return(self.chip)
-    
+        return (self.chip)
+
     def check_score(self, chip_copy: "Chip") -> bool:
         """
         Checks and updates a better chip and thus a better score
@@ -43,22 +42,19 @@ class HillClimber:
         copy_cost = chip_copy.calculate_costs()
         # Update cost of the original chip
         self.costs = self.chip.calculate_costs()
-                        
+
         if (copy_cost < self.costs):
             # Update chip to better version
             self.chip = chip_copy
             return True
-        
+
         return False
-        
-    
+
     def run(self):
         # Get one valid solution
         self.make_random_valid_solution()
-
         # Writing original solved chip data to CSV file
         save_to_file(self.chip, self.output_filename)
-
         iteration: int = 0
 
         # Start timer
@@ -79,7 +75,7 @@ class HillClimber:
                         # Find a new valid solution
                         while (wire_copy.get_current_position() != wire_copy.father.get_coords()):
                             random_reassign_wire(wire_copy, chip_copy.grid)
-                        
+
                         # Check for a better solution
                         if (self.check_score(chip_copy)):
 
@@ -102,9 +98,9 @@ class HillClimber:
                             start_time = time.time()
 
                             # Save relevant chip data to file
-                            save_to_file(self.chip, self.output_filename)                  
+                            save_to_file(self.chip, self.output_filename)
 
             except KeyboardInterrupt:
                 break
 
-        return self.chip     
+        return self.chip

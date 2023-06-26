@@ -11,6 +11,7 @@ from classes.gate import Gate
 from classes.wire import Wire
 from analysis.save import save_to_file
 
+
 class WireSegment:
     """ Implements a wire segment. A wire segment is a node which is initialized with a previous wire segment this
         one is connected to and the position of the segment. Furthermore it contains the wire cost of laying a wire to the position
@@ -37,10 +38,10 @@ class WireSegment:
 
     def __eq__(self, other):
         return self.position == other.position
-    
+
     def __repr__(self) -> str:
         return f"{self.position}"
-    
+
 
 class Heuristics:
     """ Implements an easy way to apply extra heurstics to the A* algorithm. These heuristics influence which paths
@@ -56,7 +57,7 @@ class Heuristics:
         manhattan_distance = abs(segment_coords[0] - father_coords[0]) + abs(segment_coords[1] - father_coords[1]) + abs(segment_coords[2] - father_coords[2])
 
         return manhattan_distance
-    
+
     def default(self, chip: "Chip", current_segment: "WireSegment", next_segment: "WireSegment", father_coords: tuple[int, int, int]):
         """ Default A*, only takes wire intersection costs into account """
 
@@ -67,7 +68,7 @@ class Heuristics:
         else:
             # next_segment.wire_cost += 1
             next_segment.wire_cost = current_segment.wire_cost + 1
-        
+
         # Assign manhattan distance cost
         manhattan_distance = self.calculate_manhattan_distance(next_segment.position, father_coords)
         next_segment.manhattan_cost = manhattan_distance
@@ -78,17 +79,17 @@ class Heuristics:
     def avoid_gates(self, chip: "Chip", next_segment: "WireSegment", mother_coords: tuple[int, int, int], father_coords: tuple[int, int, int]):
         segment_position = next_segment.position
         grid_size = chip.grid.get_grid_size()
-        
+
         avoid_distance = 1
         for z in range(segment_position[2], segment_position[2] + avoid_distance + 1):
             for y in range(segment_position[1], segment_position[1] + avoid_distance + 1):
                 for x in range(segment_position[0], segment_position[0] + avoid_distance + 1):
                     if (x < grid_size[0] and y < grid_size[1] and z < grid_size[2]):
-                        if (chip.grid.values[z][y][x] > 0 and not (x,y,z) == mother_coords and not (x,y,z) == father_coords):
+                        if (chip.grid.values[z][y][x] > 0 and not (x, y, z) == mother_coords and not (x, y, z) == father_coords):
                             next_segment.wire_cost += 50
 
     def avoid_low_layers(self, next_segment: "WireSegment"):
-        layer_costs = [7,6,5,4,3,2,1,0]
+        layer_costs = [7, 6, 5, 4, 3, 2, 1, 0]
         z = next_segment.get_z()
 
         next_segment.wire_cost += layer_costs[z]
@@ -128,13 +129,13 @@ class AstarAlg:
         father_segment = WireSegment(None, father_coords)
 
         return mother_segment, father_segment
-    
+
     def update_grid(self, wire_path: list[tuple[int, int, int]]) -> None:
         """ Updates the grid (3D array) if a coordinate contains a wire """
 
         for coordinate in wire_path[1:-1]:
-                self.chip.grid.values[coordinate[2]][coordinate[1]][coordinate[0]] -= 1
-    
+            self.chip.grid.values[coordinate[2]][coordinate[1]][coordinate[0]] -= 1
+
     def check_if_wire_completed(self, current_segment: "WireSegment", father_segment: "WireSegment") -> tuple[bool, Optional[list[tuple[int, int, int]]]]:
         """ Determines if a wire had reached its destination and if so retuns its path"""
 
@@ -153,7 +154,7 @@ class AstarAlg:
             return True, wire_path
         else:
             return False, None
-        
+
     def get_all_directions(self, current_segment: "WireSegment") -> list[tuple[int, int, int]]:
         """ Retuns all possible directions in the grid from a wire segments' position"""
 
@@ -164,7 +165,7 @@ class AstarAlg:
         directions = [(x + 1, y, z), (x - 1, y, z), (x, y + 1, z), (x, y - 1, z), (x, y, z + 1), (x, y, z - 1)]
 
         return directions
-    
+
     def get_possible_directions(self, current_segment: "WireSegment", father_coords: tuple[int, int, int]) -> list[tuple[int, int, int]]:
         """ Returns all possible directions in the grid from a wire segemnt's position """
 
@@ -182,7 +183,7 @@ class AstarAlg:
             if direction[0] > grid_upperbounds[0] or direction[1] > grid_upperbounds[1] or direction[2] > grid_upperbounds[2] or direction[0] < 0 or direction[1] < 0 or direction[2] < 0:
                 continue
 
-            # Check if this direction contains a gate other than the father gate, proceed if not 
+            # Check if this direction contains a gate other than the father gate, proceed if not
             if self.chip.grid.values[direction[2]][direction[1]][direction[0]] > 0 and direction != father_coords:
                 continue
 
@@ -195,7 +196,7 @@ class AstarAlg:
         """ Create and return a wire segment for each possible direction from the current wire segment """
 
         next_segments = []
-        
+
         # Get possible directions
         possible_directions = self.get_possible_directions(current_segment, father_coords)
 
@@ -210,14 +211,14 @@ class AstarAlg:
             next_segments.append(new_segment)
 
         return next_segments
-    
+
     # def calculate_manhattan_distance(self, segment_coords: tuple[int, int, int], father_coords: tuple[int, int, int]):
     #     """ Returns the manhattan distance between two points """
 
     #     manhattan_distance = abs(segment_coords[0] - father_coords[0]) + abs(segment_coords[1] - father_coords[1]) + abs(segment_coords[2] - father_coords[2])
 
     #     return manhattan_distance
-    
+
     # def assign_next_segment_costs(self, next_segment: "WireSegment", father_coords: tuple[int, int, int]):
     #     """ Determines and assigns the cost of using a wire segment to the object """
 
@@ -226,7 +227,7 @@ class AstarAlg:
     #         next_segment.wire_cost += 300
     #     else:
     #         next_segment.wire_cost += 1
-        
+
     #     # Assign manhattan distance cost
     #     manhattan_distance = self.calculate_manhattan_distance(next_segment.position, father_coords)
     #     next_segment.manhattan_cost = manhattan_distance
@@ -252,7 +253,7 @@ class AstarAlg:
 
         # Repeat while there open paths
         while len(open_list) > 0:
-            # Sort open list on segment cost 
+            # Sort open list on segment cost
             open_list.sort(key=lambda x: x.total_cost, reverse = True)
 
             # Set the current segment to the lowest sum segment
@@ -271,7 +272,6 @@ class AstarAlg:
 
             # open_list.pop(current_index)
             # closed_list.append(current_segment)
-
 
             # Check if father is reached
             completed, wire_path = self.check_if_wire_completed(current_segment, father_segment)
@@ -324,7 +324,7 @@ class AstarAlg:
                 connections.append((mother, father, manhattan_distance))
 
         connections.sort(key=operator.itemgetter(2))
-        
+
         return connections[::-1]
 
     def run(self):
@@ -335,28 +335,28 @@ class AstarAlg:
 
         # Get sorted connections
         sorted_connections = self.sort_desired_connections()
-        
+
         # Draw and add all wires to chip
         wires_drawn = 1
         for connection in sorted_connections:
-                mother = connection[0]
-                father = connection[1]
+            mother = connection[0]
+            father = connection[1]
 
-                # Draw wire and get path
-                print(f"Drawing wire {wires_drawn}")
-                wire_path = self.draw_wire(mother, father)
-                wires_drawn += 1
+            # Draw wire and get path
+            print(f"Drawing wire {wires_drawn}")
+            wire_path = self.draw_wire(mother, father)
+            wires_drawn += 1
 
-                # Create new wire object
-                new_wire = Wire(mother, father)
-                new_wire.pop_unit()
+            # Create new wire object
+            new_wire = Wire(mother, father)
+            new_wire.pop_unit()
 
-                # Add found path to wire object
-                for segment_coords in wire_path:
-                    new_wire.add_unit(segment_coords)
+            # Add found path to wire object
+            for segment_coords in wire_path:
+                new_wire.add_unit(segment_coords)
 
-                # Add wire object to chip
-                self.chip.add_wire(new_wire)
+            # Add wire object to chip
+            self.chip.add_wire(new_wire)
 
         # Determine duration of algorithm
         total_time = time.time() - start_time

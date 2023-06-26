@@ -11,20 +11,15 @@ sys.path.append("..")
 import copy
 import random
 from classes.chip import Chip
-from classes.wire import Wire
 from .random_alg import random_reassign_wire
-
 from analysis.save import save_to_file
-
 
 
 class SimulatedAnnealing(HillClimber):
 
-
     def __init__(self, chip_no: int, netlist_no: int, output_filename: str, temp: int = 1000):
         # Use init of hill_climber class
         super().__init__(chip_no, netlist_no, output_filename)
-        #self.chip = Chip(chip_no, f"netlist_{netlist_no}.csv")
 
         # Starting and current temperature
         self.start_temp = temp
@@ -33,10 +28,10 @@ class SimulatedAnnealing(HillClimber):
 
     def cool_down(self, amount_of_tries: int):
         """
-        This function will make the temperature gradually cool down eventually becoming zero. 
+        This function will make the temperature gradually cool down eventually becoming zero.
         When this has become zero, the function will just run like a regular hillclimber would.
         """
-        self.current_temp -= (self.start_temp / amount_of_tries)   
+        self.current_temp -= (self.start_temp / amount_of_tries)
 
     def check_solution_not_perfect(self, chip_copy: "Chip"):
         """
@@ -83,9 +78,9 @@ class SimulatedAnnealing(HillClimber):
         if random.random() < chance:
             self.chip = chip_copy
             return True
-        
+
         return False
-    
+
     def run_sim_annealing(self):
         # Get one valid solution
         self.make_random_valid_solution()
@@ -113,8 +108,8 @@ class SimulatedAnnealing(HillClimber):
                         # Find a new valid solution
                         while (wire_copy.get_current_position() != wire_copy.father.get_coords()):
                             random_reassign_wire(wire_copy, chip_copy.grid)
-                        
-                        # Check for a better solution
+
+                        # Check for a better solution or accept a worse one
                         if (self.check_solution_not_perfect(chip_copy)):
 
                             # Update algorithm iteration number
@@ -136,9 +131,9 @@ class SimulatedAnnealing(HillClimber):
                             start_time = time.time()
 
                             # Save relevant chip data to file
-                            save_to_file(self.chip, self.output_filename)                  
+                            save_to_file(self.chip, self.output_filename)
 
             except KeyboardInterrupt:
                 break
 
-        return self.chip     
+        return self.chip
