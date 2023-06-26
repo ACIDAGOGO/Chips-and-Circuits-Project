@@ -69,11 +69,19 @@ if __name__ == "__main__":
         print("Start A*")
         astar = AstarAlg(chip_number, netlist_number, output_filename, None)
         chip = astar.chip
-        visualise(chip, algorithm, output_filename)
+        #visualise(chip, algorithm, output_filename)
 
         astar = AstarAlg(chip_number, netlist_number, output_filename, "avoid_gates")
         chip = astar.chip
-        visualise(chip, "avoid gates", output_filename)
+        #visualise(chip, "avoid gates", output_filename)
+
+        astar = AstarAlg(chip_number, netlist_number, output_filename, "avoid_low")
+        chip = astar.chip
+        #visualise(chip, "avoid low", output_filename)
+
+        astar = AstarAlg(chip_number, netlist_number, output_filename, "all")
+        chip = astar.chip
+        #visualise(chip, "avoid all", output_filename)
 
     else:
         print("Invalid algorithm: Choose from random, hillclimber or astar")

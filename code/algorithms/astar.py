@@ -57,14 +57,16 @@ class Heuristics:
 
         return manhattan_distance
     
-    def default(self, chip: "Chip", next_segment: "WireSegment", father_coords: tuple[int, int, int]):
+    def default(self, chip: "Chip", current_segment: "WireSegment", next_segment: "WireSegment", father_coords: tuple[int, int, int]):
         """ Default A*, only takes wire intersection costs into account """
 
         # Check if position already contains a wire segment and assign wire cost
         if (chip.grid.values[next_segment.get_z()][next_segment.get_y()][next_segment.get_x()] <= -1):
-            next_segment.wire_cost += 300
+            # next_segment.wire_cost += 300
+            next_segment.wire_cost = current_segment.wire_cost + 300
         else:
-            next_segment.wire_cost += 1
+            # next_segment.wire_cost += 1
+            next_segment.wire_cost = current_segment.wire_cost + 1
         
         # Assign manhattan distance cost
         manhattan_distance = self.calculate_manhattan_distance(next_segment.position, father_coords)
@@ -77,7 +79,7 @@ class Heuristics:
         segment_position = next_segment.position
         grid_size = chip.grid.get_grid_size()
         
-        avoid_distance = 2
+        avoid_distance = 1
         for z in range(segment_position[2], segment_position[2] + avoid_distance + 1):
             for y in range(segment_position[1], segment_position[1] + avoid_distance + 1):
                 for x in range(segment_position[0], segment_position[0] + avoid_distance + 1):
@@ -85,13 +87,26 @@ class Heuristics:
                         if (chip.grid.values[z][y][x] > 0 and not (x,y,z) == mother_coords and not (x,y,z) == father_coords):
                             next_segment.wire_cost += 50
 
-    def assign_next_segment_costs(self, chip: "Chip", next_segment: "WireSegment", mother_coords: tuple[int, int, int], father_coords: tuple[int, int, int]):
+    def avoid_low_layers(self, next_segment: "WireSegment"):
+        layer_costs = [7,6,5,4,3,2,1,0]
+        z = next_segment.get_z()
+
+        next_segment.wire_cost += layer_costs[z]
+
+    def assign_next_segment_costs(self, chip: "Chip", current_segment: "WireSegment", next_segment: "WireSegment", mother_coords: tuple[int, int, int], father_coords: tuple[int, int, int]):
         """ Determines and assigns the cost of using a wire segment to the object """
 
         # Apply different costs based on chosen heuristic
-        self.default(chip, next_segment, father_coords)
+        self.default(chip, current_segment, next_segment, father_coords)
         if (self.heuristic == "avoid_gates"):
             self.avoid_gates(chip, next_segment, mother_coords, father_coords)
+            next_segment.total_cost = next_segment.wire_cost + next_segment.manhattan_cost
+        elif (self.heuristic == "avoid_low"):
+            self.avoid_low_layers(next_segment)
+            next_segment.total_cost = next_segment.wire_cost + next_segment.manhattan_cost
+        elif (self.heuristic == "all"):
+            self.avoid_gates(chip, next_segment, mother_coords, father_coords)
+            self.avoid_low_layers(next_segment)
             next_segment.total_cost = next_segment.wire_cost + next_segment.manhattan_cost
 
 
@@ -278,7 +293,7 @@ class AstarAlg:
                     continue
 
                 # Assign costs to the next segment
-                self.heuristic.assign_next_segment_costs(self.chip, segment, mother_coords, father_coords)
+                self.heuristic.assign_next_segment_costs(self.chip, current_segment, segment, mother_coords, father_coords)
 
                 # Check if possible next segment already in open list
                 for index, open_segment in enumerate(open_list):
@@ -287,8 +302,8 @@ class AstarAlg:
                         if segment.wire_cost > open_segment.wire_cost:
                             go_next = True
                         else:
-                            open_list.pop(index)
                             closed_list.append(open_segment)
+                            open_list.pop(index)
                 if go_next:
                     continue
 
@@ -310,7 +325,7 @@ class AstarAlg:
 
         connections.sort(key=operator.itemgetter(2))
         
-        return connections
+        return connections[::-1]
 
     def run(self):
         """ Lay all wires and return chip """
