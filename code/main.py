@@ -20,6 +20,15 @@ if __name__ == "__main__":
         netlist_number: int = int(sys.argv[2])
         algorithm: str = sys.argv[3]
         output_filename: str = sys.argv[4]
+        if len(sys.argv) >= 6:
+            sorting_mode: str = sys.argv[5]
+            if len(sys.argv) >= 7:
+                heuristic: str = sys.argv[6]
+            else:
+                heuristic = None
+        else:
+            sorting_mode = None
+            heuristic = None
     else:
         print("Insufficient command-line arguments. Please provide at least four arguments: chip number, netlist number, algorithm, output filename.")
         sys.exit(1)
@@ -45,6 +54,14 @@ if __name__ == "__main__":
         print("Please specify a unique output filename.")
         sys.exit(1)
     
+    if (sorting_mode not in [None, "ascending", "descending"]):
+        print("Invalid heuristic. Choose from: ascending, descending")
+        sys.exit(1)
+
+    if (heuristic not in [None, "avoid_gates", "avoid_low", "all"]):
+        print("Invalid heuristic. Choose from: avoid_gates, avoid_low, all")
+        sys.exit(1)
+
     if (algorithm == "random"):
         # Run random algorithm
         print("Start Random")
@@ -66,22 +83,28 @@ if __name__ == "__main__":
         sim_annealing.run_sim_annealing()
 
     elif (algorithm == "astar"):
-        print("Start A*")
-        astar = AstarAlg(chip_number, netlist_number, output_filename, None)
-        chip = astar.chip
+            print("Start A*")
+            astar = AstarAlg(chip_number, netlist_number, output_filename, sorting_mode, heuristic)
+            chip = astar.chip
+            algorithm_name = f"{algorithm} - Sort: {sorting_mode} - Heuristic: {heuristic}"
+            visualise(chip, algorithm_name, output_filename)
+
+        # print("Start A*")
+        # astar = AstarAlg(chip_number, netlist_number, output_filename, "descending", None)
+        # chip = astar.chip
         #visualise(chip, algorithm, output_filename)
 
-        astar = AstarAlg(chip_number, netlist_number, output_filename, "avoid_gates")
-        chip = astar.chip
-        #visualise(chip, "avoid gates", output_filename)
+        # astar = AstarAlg(chip_number, netlist_number, output_filename, "avoid_gates")
+        # chip = astar.chip
+        # #visualise(chip, "avoid gates", output_filename)
 
-        astar = AstarAlg(chip_number, netlist_number, output_filename, "avoid_low")
-        chip = astar.chip
-        #visualise(chip, "avoid low", output_filename)
+        # astar = AstarAlg(chip_number, netlist_number, output_filename, "avoid_low")
+        # chip = astar.chip
+        # #visualise(chip, "avoid low", output_filename)
 
-        astar = AstarAlg(chip_number, netlist_number, output_filename, "all")
-        chip = astar.chip
-        #visualise(chip, "avoid all", output_filename)
+        # astar = AstarAlg(chip_number, netlist_number, output_filename, "all")
+        # chip = astar.chip
+        # #visualise(chip, "avoid all", output_filename)
 
     else:
         print("Invalid algorithm: Choose from random, hillclimber or astar")
