@@ -13,7 +13,6 @@ from analysis.save import save_to_file
 
 
 class HillClimber:
-
     def __init__(self, chip_no: int, netlist_no: int, output_filename: str):
         self.chip = Chip(chip_no, f"netlist_{netlist_no}.csv")
         self.costs: int
@@ -36,8 +35,9 @@ class HillClimber:
 
     def check_score(self, chip_copy: "Chip") -> bool:
         """
-        Checks and updates a better chip and thus a better score
+        Checks and updates a better chip and thus a better score.
         """
+
         # Cost of the chip after placing a new wire
         copy_cost = chip_copy.calculate_costs()
         # Update cost of the original chip
@@ -51,6 +51,10 @@ class HillClimber:
         return False
 
     def run(self):
+        """
+        Runs hillclimber algorithm.
+        """
+
         # Get one valid solution
         self.make_random_valid_solution()
 

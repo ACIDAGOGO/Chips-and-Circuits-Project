@@ -17,7 +17,6 @@ random.seed(a = 1)
 
 
 class SimulatedAnnealing(HillClimber):
-
     def __init__(self, chip_no: int, netlist_no: int, output_filename: str, temp: int = 1000):
         # Use init of hill_climber class
         super().__init__(chip_no, netlist_no, output_filename)
@@ -84,6 +83,10 @@ class SimulatedAnnealing(HillClimber):
         return False
 
     def run_sim_annealing(self):
+        """
+        Runs simulated annealing algorithm.
+        """
+
         # Get one valid solution
         self.make_random_valid_solution()
 
