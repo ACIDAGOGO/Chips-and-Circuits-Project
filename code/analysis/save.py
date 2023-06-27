@@ -1,16 +1,17 @@
 import csv
 import sys
-import os
+
+from typing import Union
 from classes.chip import Chip  # type: ignore
 sys.path.append("../classes")
 
 
-def extract_data(chip: 'Chip') -> list[int]:
+def extract_data(chip: 'Chip') -> list[Union[int, float]]:
     """
     Grab iteration number, total cost, total wirecount
     and intersectioncount from chip. Return it as list.
     """
-    data: list = []
+    data: list[Union[int, float]] = []
 
     data.append(int(chip.iteration))
     data.append(int(chip.cost))
@@ -22,9 +23,9 @@ def extract_data(chip: 'Chip') -> list[int]:
     return data
 
 
-def save_to_file(chip: 'Chip', output_filename: str):
+def save_to_file(chip: 'Chip', output_filename: str) -> None:
     """
-    Write data from list to csv file.
+    Write data from list to csv-file.
     """
     data = extract_data(chip)
 

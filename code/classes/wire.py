@@ -1,6 +1,9 @@
 from .gate import Gate
 
 class Wire:
+    """
+    Class used to represent a wire on a computer chip.
+    """
     def __init__(self, mother: 'Gate', father: 'Gate'):
         self.mother = mother
         self.father = father

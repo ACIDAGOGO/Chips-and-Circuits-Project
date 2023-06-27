@@ -1,22 +1,22 @@
-import sys
-import random
+import copy
 import math
+import random
+import sys
 import time
 
-from .hill_climber import HillClimber
 sys.path.append("../analysis")
 sys.path.append("../classes")
 sys.path.append("..")
 
-import copy
-import random
-from classes.chip import Chip
-from .random_alg import random_reassign_wire
 from analysis.save import save_to_file
+from classes.chip import Chip
+from .hill_climber import HillClimber
+from .random_alg import random_reassign_wire
+
+random.seed(a = 1)
 
 
 class SimulatedAnnealing(HillClimber):
-
     def __init__(self, chip_no: int, netlist_no: int, output_filename: str, temp: int = 1000):
         # Use init of hill_climber class
         super().__init__(chip_no, netlist_no, output_filename)
@@ -42,6 +42,7 @@ class SimulatedAnnealing(HillClimber):
 
         # Cost of the chip after placing a new wire
         copy_cost = chip_copy.calculate_costs()
+
         # Update cost of the original chip
         self.costs = self.chip.calculate_costs()
 
@@ -82,6 +83,10 @@ class SimulatedAnnealing(HillClimber):
         return False
 
     def run_sim_annealing(self):
+        """
+        Runs simulated annealing algorithm.
+        """
+
         # Get one valid solution
         self.make_random_valid_solution()
 
@@ -97,14 +102,19 @@ class SimulatedAnnealing(HillClimber):
             try:
                 # Go through all the wires
                 for wire in range(len(self.chip.wires)):
+
                     # Try and improve the wire a thousand times
                     for _ in range(1000):
+
                         # Copy the original chip
                         chip_copy = copy.deepcopy(self.chip)
+
                         # Copy the current wire
                         wire_copy = chip_copy.wires[wire]
+
                         # Randomly replace the wire
                         random_reassign_wire(wire_copy, chip_copy.grid)
+                        
                         # Find a new valid solution
                         while (wire_copy.get_current_position() != wire_copy.father.get_coords()):
                             random_reassign_wire(wire_copy, chip_copy.grid)
@@ -136,4 +146,5 @@ class SimulatedAnnealing(HillClimber):
             except KeyboardInterrupt:
                 break
 
+        print(f"\nRuntime: {round(self.chip.cumulative_duration, 3)} seconds.")
         return self.chip
