@@ -143,4 +143,5 @@ class SimulatedAnnealing(HillClimber):
             except KeyboardInterrupt:
                 break
 
+        print(f"\nRuntime: {round(self.chip.cumulative_duration, 3)} seconds.")
         return self.chip

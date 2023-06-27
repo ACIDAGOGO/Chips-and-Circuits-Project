@@ -4,6 +4,7 @@ sys.path.append("../classes")
 
 import random
 import copy
+import time
 from classes.grid import Grid
 from classes.wire import Wire
 from classes.chip import Chip
@@ -68,7 +69,7 @@ def lay_wire(wire: 'Wire', grid: 'Grid') -> None:
 
 
 def random_reassign_wire(new_wire: "Wire", grid: "Grid"):
-    # Trace back wire
+    # Trace back wire and remove
     for unit in range(len(new_wire.get_path()) - 1):
         coords = new_wire.pop_unit()
 
@@ -82,16 +83,20 @@ def random_reassign_wire(new_wire: "Wire", grid: "Grid"):
 
 def run_random(chip_no: int, netlist_no: int, output_filename: str) -> 'Chip':
     iteration = 0
+    cumulative_duration: float = 0.0
+
+    # Start timer
+    start_time: float = time.time()
 
     while (True):
         try:
             chip = Chip(chip_no, f"netlist_{netlist_no}.csv")
 
+            # Loop through all mother gates and lay wires to father
             for mother in chip.gates.values():
                 for father in mother.get_destinations():
                     new_wire = Wire(mother, father)
                     chip.add_wire(new_wire)
-                    # print(f'WIRE ORIGIN: {new_wire.mother.get_id()} DESTINATION: {new_wire.father.get_id()}')
                     lay_wire(new_wire, chip.grid)
 
                     # Reset wire and its path on the grid and find new path until wire has found father
@@ -108,17 +113,27 @@ def run_random(chip_no: int, netlist_no: int, output_filename: str) -> 'Chip':
                 if (total_costs < best_chip.calculate_costs()):
                     best_chip = copy.deepcopy(chip)
 
-            # DEBUG
-            print(f'COST:{total_costs}')
-
             # Count chip iteration number
             chip.iteration = iteration
             iteration += 1
+
+            # Get time for completed iteration
+            completed_iteration_time = time.time()
+
+            # Calculate duration of iteration
+            chip.iteration_duration = completed_iteration_time - start_time
+
+            # Update cumulative iteration duration
+            cumulative_duration += chip.iteration_duration
+            chip.cumulative_duration = cumulative_duration
+
+            # Reset timer
+            start_time = time.time()
 
             # Save relevant chip data to file
             save_to_file(chip, output_filename)
 
         except KeyboardInterrupt:
             break
-
+    print(f"\nRuntime: {round(cumulative_duration, 3)} seconds.")
     return best_chip
