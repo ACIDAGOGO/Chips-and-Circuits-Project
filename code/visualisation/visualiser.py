@@ -10,7 +10,7 @@ def get_gates(chip: 'Chip') -> tuple[list[int], list[int], list[int]]:
     """
     Return gate coordinates of a given chip.
     """
-    coords_list: list = []
+    coords_list: list[tuple[int, int, int]] = []
 
     for gate in chip.gates.values():
         coords_list.append(gate.get_coords())
@@ -35,9 +35,9 @@ def extract_xyz(coords: list[tuple[int, int, int]]) -> tuple[list[int], list[int
     """
     Break up list of tuples into three seperate lists.
     """
-    x: list = []
-    y: list = []
-    z: list = []
+    x: list [int]= []
+    y: list [int]= []
+    z: list [int]= []
 
     for xyz in coords:
         x.append(xyz[0])
