@@ -58,12 +58,14 @@ if __name__ == "__main__":
         hillclimber = HillClimber(chip_number, netlist_number, output_filename)
         chip = hillclimber.run()
         visualise(chip, algorithm, output_filename)
+        create_lineplot(output_filename)
         
     elif (algorithm == "simulatedannealing"):
         # Run Simulated Annealing algorithm
         print("Start Simulated Annealing") 
         sim_annealing = sa(chip_number, netlist_number, output_filename, temp= 100000)
         sim_annealing.run_sim_annealing()
+        create_lineplot(output_filename)
 
     elif (algorithm == "astar"):
         print("Start A*")

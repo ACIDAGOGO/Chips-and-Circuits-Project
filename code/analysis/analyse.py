@@ -121,11 +121,11 @@ def load_data(output_filename: str) -> tuple[list[int], list[int], list[int], li
     return iterations, costs, wirecounts, intersectioncounts, time_per_iteration, cumulative_time
 
 # Only suitable for random algorithm data
-def create_histogram(output_filename: str):
-    # Get costs data
+def create_histogram(output_filename: str) -> None:
+    # Get data
     data = load_data(output_filename)
-    costs = data[1]
     iterations = data[0]
+    costs = data[1]
 
     # Get optimal bin width
     bin_width = calculate_optimal_bin_width(costs)
@@ -137,3 +137,19 @@ def create_histogram(output_filename: str):
     plt.xlabel("Total cost of chip configuration", fontsize=12)
     plt.ylabel("Frequency", fontsize=12)
     plt.savefig(f'./../output/{output_filename}/{output_filename}_histogram.png', bbox_inches='tight', pad_inches=1, dpi=300)
+
+def create_lineplot(output_filename: str) -> None:
+    # Get data
+    data = load_data(output_filename)
+    iterations = data[0]
+    costs = data[1]
+    wirecounts = data[2]
+    intersectioncounts = data[3]
+
+    # plot lines
+    plt.plot(iterations, costs, label = "total cost")
+    plt.plot(iterations, wirecounts, label = "amount of wires")
+    plt.plot(iterations, intersectioncounts, label = "amount of intersections")
+    plt.legend()
+    plt.show()
+    
