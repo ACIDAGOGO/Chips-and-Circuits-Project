@@ -138,7 +138,7 @@ def create_histogram(output_filename: str) -> None:
     plt.ylabel("Frequency", fontsize=12)
     plt.savefig(f'./../output/{output_filename}/{output_filename}_histogram.png', bbox_inches='tight', pad_inches=1, dpi=300)
 
-def create_lineplot(output_filename: str) -> None:
+def create_lineplot(output_filename: str, alg_name: str) -> None:
     # Get data
     data = load_data(output_filename)
     iterations = data[0]
@@ -146,10 +146,11 @@ def create_lineplot(output_filename: str) -> None:
     wirecounts = data[2]
     intersectioncounts = data[3]
 
-    # plot lines
-    plt.plot(iterations, costs, label = "total cost")
-    plt.plot(iterations, wirecounts, label = "amount of wires")
-    plt.plot(iterations, intersectioncounts, label = "amount of intersections")
-    plt.legend()
-    plt.show()
+    # plot lineplot of total costs over iterations (suitable for comparing hillclimbing to simulated annealing
+    plt.figure(figsize=(8,8))
+    plt.plot(iterations, costs)
+    plt.title(f"Total chip costs over {len(iterations)} iterations ({alg_name} Algorithm)", fontsize=15)
+    plt.xlabel("Total cost of chip configuration", fontsize=12)
+    plt.ylabel("Iterations", fontsize=12)
+    plt.savefig(f'./../output/{output_filename}/{output_filename}_lineplot.png', bbox_inches='tight', pad_inches=1, dpi=300)
     
