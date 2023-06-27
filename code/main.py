@@ -29,7 +29,8 @@ if __name__ == "__main__":
         else:
             sorting_mode = None
             heuristic = None
-            endmessage = f"Run completed. Output can be found in Chips-and-Circuits-Project/output/{output_filename}/"
+
+        endmessage = f"Run completed. Output can be found in Chips-and-Circuits-Project/output/{output_filename}/"
     else:
         print("Insufficient command-line arguments. Please provide at least four arguments: chip number, netlist number, algorithm, output filename.")
         sys.exit(1)
@@ -55,67 +56,54 @@ if __name__ == "__main__":
         print("Please specify a unique output filename.")
         sys.exit(1)
     
+    # Check if valid sorting mode is given
     if (sorting_mode not in [None, "ascending", "descending"]):
         print("Invalid heuristic. Choose from: ascending, descending")
         sys.exit(1)
 
+    # Check if valid heuristic is given
     if (heuristic not in [None, "avoid_gates", "avoid_low", "all"]):
         print("Invalid heuristic. Choose from: avoid_gates, avoid_low, all")
         sys.exit(1)
 
     if (algorithm == "random"):
-        # Run random algorithm
         print("Started Random\nPress 'ctrl+C' to end run")
+
+        # Run random algorithm
         chip = run_random(chip_number, netlist_number, output_filename)
         visualise(chip, algorithm, output_filename)
         create_histogram(output_filename)
-        print(endmessage)
 
+        print(endmessage)
     elif (algorithm == "hillclimber"):
-        # Run Hill Climber algorithm
         print("Started Hill Climber\nPress 'ctrl+C' to end run")
+
+        # Run Hill Climber algorithm
         hillclimber = HillClimber(chip_number, netlist_number, output_filename)
         chip = hillclimber.run()
         visualise(chip, algorithm, output_filename)
         create_lineplot(output_filename, "Hillclimber")
-        print(endmessage)
-        
+
+        print(endmessage) 
     elif (algorithm == "simulatedannealing"):
+        print("Started Simulated Annealing\nPress 'ctrl+C' to end run")
+
         # Run Simulated Annealing algorithm
-        print("Started Simulated Annealing\nPress 'ctrl+C' to end run") 
         sim_annealing = sa(chip_number, netlist_number, output_filename, temp= 100000)
         sim_annealing.run_sim_annealing()
         create_lineplot(output_filename, "Simulated Annealing")
-        print(endmessage)
 
+        print(endmessage)
     elif (algorithm == "astar"):
         print("Started A*")
-        astar = AstarAlg(chip_number, netlist_number, output_filename, sorting_mode, heuristic)
+
+        # Run A* algorithm
+        astar = AstarAlg(chip_number, netlist_number, output_filename, sorting_mode, "all")
         chip = astar.chip
         algorithm_name = f"{algorithm} - Sort: {sorting_mode} - Heuristic: {heuristic}"
         visualise(chip, algorithm_name, output_filename)
 
-        # print("Start A*")
-        # astar = AstarAlg(chip_number, netlist_number, output_filename, "descending", None)
-        # chip = astar.chip
-        #visualise(chip, algorithm, output_filename)
         print(endmessage)
-
-        astar = AstarAlg(chip_number, netlist_number, output_filename, "avoid_gates")
-        chip = astar.chip
-        #visualise(chip, "avoid gates", output_filename)
-        print(endmessage)
-
-        astar = AstarAlg(chip_number, netlist_number, output_filename, "avoid_low")
-        chip = astar.chip
-        #visualise(chip, "avoid low", output_filename)
-        print(endmessage)
-
-        astar = AstarAlg(chip_number, netlist_number, output_filename, "all")
-        chip = astar.chip
-        #visualise(chip, "avoid all", output_filename)
-        print(endmessage)
-
     else:
         print("Invalid algorithm: Choose from random, hillclimber, simulatedannealing or astar.")
         sys.exit(1)
