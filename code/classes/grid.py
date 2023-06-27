@@ -37,7 +37,6 @@ class Grid:
 
         # Creates grid with zeros with aspect ratio self.x, self.y
         grid = np.zeros((self.grid_z + 1, self.grid_y + 1, self.grid_x + 1))
-        print(grid)
 
         return grid
 

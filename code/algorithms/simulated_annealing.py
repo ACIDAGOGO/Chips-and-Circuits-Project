@@ -1,18 +1,19 @@
-import sys
-import random
+import copy
 import math
+import random
+import sys
 import time
 
-from .hill_climber import HillClimber
 sys.path.append("../analysis")
 sys.path.append("../classes")
 sys.path.append("..")
 
-import copy
-import random
-from classes.chip import Chip
-from .random_alg import random_reassign_wire
 from analysis.save import save_to_file
+from classes.chip import Chip
+from .hill_climber import HillClimber
+from .random_alg import random_reassign_wire
+
+random.seed(a = 1)
 
 
 class SimulatedAnnealing(HillClimber):
