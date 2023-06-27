@@ -53,6 +53,10 @@ class HillClimber:
     def run(self):
         # Get one valid solution
         self.make_random_valid_solution()
+
+        # Update the first score
+        self.chip.calculate_costs()
+
         # Writing original solved chip data to CSV file
         save_to_file(self.chip, self.output_filename)
         iteration: int = 0
@@ -64,6 +68,7 @@ class HillClimber:
             try:
                 # Go through all the wires
                 for wire in range(len(self.chip.wires)):
+                    
                     # Try and improve the wire a thousand times
                     for _ in range(1000):
                         # Copy the original chip
