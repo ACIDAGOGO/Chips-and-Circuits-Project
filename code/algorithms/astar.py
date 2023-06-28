@@ -45,7 +45,7 @@ class WireSegment:
 
 class Heuristics:
     """ Implements an easy way to apply extra heurstics to the A* algorithm. These heuristics influence which paths
-        are prioritized (seen as "cheaper") when laying wire segments by setting the cost of making certain moves 
+        are prioritized (seen as "cheaper") when laying wire segments by setting the cost of making certain moves
     """
 
     def __init__(self, heuristic: str = None):

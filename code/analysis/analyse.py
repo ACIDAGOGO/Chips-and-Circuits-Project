@@ -1,7 +1,10 @@
 import sys
 import os
 import csv
+import matplotlib
+matplotlib.use('qtagg')
 import matplotlib.pyplot as plt  # type: ignore
+
 import math
 import statistics
 import numpy as np
