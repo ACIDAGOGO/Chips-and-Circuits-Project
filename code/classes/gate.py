@@ -2,6 +2,7 @@ class Gate:
     """
     Class used to represent a gate on a computer chip.
     """
+    
     def __init__(self, id: int, x: int, y: int) -> None:
         self.id = id
         self.x = x

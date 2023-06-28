@@ -116,7 +116,7 @@ def run_random(chip_no: int, netlist_no: int, output_filename: str) -> 'Chip':
     """
     Runs random algorithm.
     """
-    
+
     iteration = 0
     cumulative_duration: float = 0.0
 
@@ -172,5 +172,6 @@ def run_random(chip_no: int, netlist_no: int, output_filename: str) -> 'Chip':
 
         except KeyboardInterrupt:
             break
+        
     print(f"\nRuntime: {round(cumulative_duration, 3)} seconds.")
     return best_chip

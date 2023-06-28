@@ -70,7 +70,7 @@ class Heuristics:
                                                       father.get_coords())
                 connections.append((mother, father, manhattan_distance))
 
-        if (self.sorting_mode == None):
+        if (self.sorting_mode is None):
             return connections
 
         connections.sort(key=operator.itemgetter(2))

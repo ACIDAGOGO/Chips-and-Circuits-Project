@@ -9,6 +9,7 @@ def calculate_optimal_bin_width(data: list[int]) -> int:
     """
     Calculate the optimal bin width given the data characteristics.
     """
+
     # Calculate the interquartile range (IQR)
     q1 = np.percentile(data, 25)
     q3 = np.percentile(data, 75)
@@ -23,6 +24,10 @@ def calculate_optimal_bin_width(data: list[int]) -> int:
 def load_data(output_filename: str) ->\
               tuple[list[int], list[int], list[int], list[int],
                     list[float], list[float]]:
+    """
+    Loads data from csv-file and stores it in lists.
+    """
+
     filename: str = output_filename
     filepath: str = f"./../output/{filename}/{filename}.csv"
 
@@ -55,8 +60,12 @@ def load_data(output_filename: str) ->\
         time_per_iteration, cumulative_time
 
 
-# Only suitable for random algorithm data
 def create_histogram(output_filename: str) -> None:
+    """
+    Creates a histrogram from csv-file.
+    (only suitable for random algorithm data)
+    """
+
     # Get data
     data = load_data(output_filename)
     iterations = data[0]
@@ -70,18 +79,23 @@ def create_histogram(output_filename: str) -> None:
     plt.figure(figsize=(8, 8))
     plt.hist(costs, bins=range(min(costs), max(costs) + bin_width, bin_width),
              linewidth=1.2, edgecolor='black')
-    plt.title(f"Frequency of total chip costs over {len(iterations)}\
-              iterations (Random Algorithm)\n\
-              Mean = {round(statistics.mean(costs))},\
-              Min = {min(costs)}, Max = {max(costs)}", fontsize=15)
+    plt.title(f"Frequency of total chip costs over {len(iterations)}"\
+              f" iterations (Random Algorithm)\n"\
+              f" Mean = {round(statistics.mean(costs))},"\
+              f" Min = {min(costs)}, Max = {max(costs)}", fontsize=15)
     plt.xlabel("Total cost of chip configuration", fontsize=12)
     plt.ylabel("Frequency", fontsize=12)
-    plt.savefig(f'./../output/{output_filename}/\
-                {output_filename}_histogram.png',
+    plt.savefig(f"./../output/{output_filename}/"\
+                f"{output_filename}_histogram.png",
                 bbox_inches='tight', pad_inches=1, dpi=300)
 
 
 def create_lineplot(output_filename: str, alg_name: str) -> None:
+    """
+    Creates a lineplot from csv-file.
+    (suitable for comparing hillclimbing to simulated annealing)
+    """
+
     # Get data
     data = load_data(output_filename)
     iterations = data[0]
@@ -89,14 +103,13 @@ def create_lineplot(output_filename: str, alg_name: str) -> None:
 
     maximum = max(iterations)
 
-    # plot lineplot of total costs over iterations
-    # (suitable for comparing hillclimbing to simulated annealing)
+    # Plot lineplot of total costs over iterations
     plt.figure(figsize=(8, 8))
     plt.plot(iterations, costs)
-    plt.title(f"Total chip costs over {len(iterations)}\
-               iterations ({alg_name} Algorithm)", fontsize=15)
+    plt.title(f"Total chip costs over {len(iterations)}"
+               f" iterations ({alg_name} Algorithm)", fontsize=15)
     plt.xlabel("Iterations", fontsize=12)
     plt.ylabel("Total cost of chip configuration", fontsize=12)
     plt.text(maximum, costs[maximum], str(costs[maximum]))
-    plt.savefig(f'./../output/{output_filename}/{output_filename}_lineplot.png',
+    plt.savefig(f"./../output/{output_filename}/{output_filename}_lineplot.png",
                 bbox_inches='tight', pad_inches=1, dpi=300)

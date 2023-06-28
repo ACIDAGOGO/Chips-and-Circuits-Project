@@ -20,6 +20,7 @@ class HillClimber:
         """
         Create one randomly solved chip for hill_climber to improve upon.
         """
+        
         # Create the wires
         for mother in self.chip.gates.values():
             for father in mother.get_destinations():

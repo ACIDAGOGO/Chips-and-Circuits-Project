@@ -1,3 +1,2 @@
 matplotlib==3.7.1
 numpy==1.23.5
-PyQt6==6.5.1

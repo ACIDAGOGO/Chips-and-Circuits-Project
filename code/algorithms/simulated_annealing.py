@@ -17,6 +17,9 @@ random.seed(a=1)
 
 
 class SimulatedAnnealing(HillClimber):
+    """
+    Implements simulated annealing method on the hillclimber algorithm.   
+    """
 
     def __init__(self, chip_no: int, netlist_no: int,
                  output_filename: str, temp: int = 1000000):
@@ -33,6 +36,7 @@ class SimulatedAnnealing(HillClimber):
         This function will make the temperature gradually cool.
         When this is zero degrees, it runs just like a regular hillclimber.
         """
+
         self.current_temp -= (self.start_temp / amount_of_tries)
 
     def check_solution_not_perfect(self, chip_copy: "Chip"):
@@ -127,8 +131,6 @@ class SimulatedAnnealing(HillClimber):
 
                         # Check for a better solution or accept a worse one
                         if (self.check_solution_not_perfect(chip_copy)):
-
-                            print(f"temp: {self.current_temp}")
                             # Update algorithm iteration number
                             iteration += 1
 

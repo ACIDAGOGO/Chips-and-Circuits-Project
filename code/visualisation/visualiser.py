@@ -64,9 +64,9 @@ def visualise(chip: 'Chip', algorithm: str, output_filename: str) -> None:
         ax.text(gates[0][i], gates[1][i], gates[2][i], ' ' + str(i + 1))
 
     # Set title
-    plt.title(f"Chip {chip.chip_no} - {chip.netlist_name}\
-              - Algorithm: {algorithm}\
-              - Cost: {chip.calculate_costs()}",
+    plt.title(f"Chip {chip.chip_no} - {chip.netlist_name}"\
+              f" - Algorithm: {algorithm}"\
+              f" - Cost: {chip.calculate_costs()}",
               fontsize=15)
 
     # Get wire paths
@@ -91,6 +91,6 @@ def visualise(chip: 'Chip', algorithm: str, output_filename: str) -> None:
     ax.set_zticks(range(0, z + 1))
 
     # Save visualisation to file in output folder
-    fig.savefig(f'../output/{output_filename}/\
-                {output_filename}_visualisation.png',
+    fig.savefig(f"../output/{output_filename}/"\
+                f"{output_filename}_visualisation.png",
                 bbox_inches='tight', pad_inches=1, dpi=300)

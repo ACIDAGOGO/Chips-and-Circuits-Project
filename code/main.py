@@ -1,9 +1,9 @@
 from visualisation.visualiser import visualise
-from algorithms.random_alg import *
+from algorithms.random_alg import run_random
 from algorithms.hill_climber import HillClimber
 from algorithms.simulated_annealing import SimulatedAnnealing as sa
 from algorithms.astar import AstarAlg
-from analysis.analyse import *
+from analysis.analyse import create_histogram, create_lineplot
 import sys
 import os
 sys.path.append("algorithms")
@@ -13,7 +13,6 @@ sys.path.append("analysis")
 
 
 if __name__ == "__main__":
-
     # Check if at least three command-line arguments are provided
     if len(sys.argv) >= 5:
         chip_number: int = int(sys.argv[1])
@@ -30,12 +29,12 @@ if __name__ == "__main__":
             sorting_mode = None
             heuristic = None
 
-        endmessage = f"Run completed. Output can be found in:\
-                      Chips-and-Circuits-Project/output/{output_filename}/"
+        endmessage = f"Run completed. Output can be found in:"\
+                      f" Chips-and-Circuits-Project/output/{output_filename}/"
     else:
-        print("Insufficient command-line arguments.\
-               Please provide at least four arguments:\
-               chip number, netlist number, algorithm, output filename.")
+        print("Insufficient command-line arguments."\
+               " Please provide at least four arguments:"\
+               " chip number, netlist number, algorithm, output filename.")
         sys.exit(1)
 
     if chip_number not in [0, 1, 2]:
@@ -51,7 +50,7 @@ if __name__ == "__main__":
         sys.exit(1)
 
     # Create output folder
-    folder = f'../output/{output_filename}'
+    folder = f"../output/{output_filename}"
 
     if not os.path.exists(folder):
         os.mkdir(folder)
@@ -105,12 +104,12 @@ if __name__ == "__main__":
         astar = AstarAlg(chip_number, netlist_number, output_filename,
                          sorting_mode, "all")
         chip = astar.chip
-        algorithm_name = f"{algorithm} - Sort: {sorting_mode}\
-                          - Heuristic: {heuristic}"
+        algorithm_name = f"{algorithm} - Sort: {sorting_mode}"\
+                          f" - Heuristic: {heuristic}"
         visualise(chip, algorithm_name, output_filename)
 
         print(endmessage)
     else:
-        print("Invalid algorithm:\
-               Choose from random, hillclimber, simulatedannealing or astar.")
+        print("Invalid algorithm:"\
+               " Choose from random, hillclimber, simulatedannealing or astar.")
         sys.exit(1)

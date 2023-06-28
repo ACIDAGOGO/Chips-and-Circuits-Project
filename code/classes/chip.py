@@ -8,6 +8,7 @@ class Chip:
     """
     Class used to represent a computer chip.
     """
+
     def __init__(self, chip_no: int, netlist_name: str):
         self.chip_no = chip_no
         self.netlist_name = netlist_name
@@ -30,6 +31,7 @@ class Chip:
         """
         Load gate id's into 3d numpy array.
         """
+
         for gate in self.gates.values():
             self.grid.values[gate.get_z(), gate.get_y(), gate.get_x()]\
                              = gate.get_id()
@@ -38,6 +40,7 @@ class Chip:
         """
         Load all gates from CSV-file into chip.
         """
+
         with open(filename) as file:
             printlist = csv.reader(file)
 
@@ -55,6 +58,7 @@ class Chip:
         """
         Add destination gate to gate objects on chip.
         """
+
         with open(filename) as file:
             netlist = csv.reader(file)
 
@@ -75,12 +79,14 @@ class Chip:
         """
         Add wire to chip.
         """
+
         self.wires.append(wire)
 
     def calculate_costs(self) -> int:
         """
         Calculate total cost of chip configuration.
         """
+        
         cost = 0
         self.wirecount = 0
         self.intersectioncount = 0

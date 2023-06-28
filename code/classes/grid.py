@@ -7,6 +7,7 @@ class Grid:
     """
     Class used to create a grid for storing wire and gate locations in 3D space.
     """
+
     def __init__(self, chip_no: int) -> None:
         self.chip_no = chip_no
 
@@ -29,6 +30,7 @@ class Grid:
         """
         Returns the size of the grid in a tuple.
         """
+
         return (self.grid_x, self.grid_y, self.grid_z)
 
     def initialize_grid(self) -> Any:
@@ -46,6 +48,7 @@ class Grid:
         """
         Checks for a foreign, illegal gate.
         """
+        
         if self.values[position[2]][position[1]][position[0]] == father.get_id():
             return False
         elif self.values[position[2]][position[1]][position[0]] > 0:

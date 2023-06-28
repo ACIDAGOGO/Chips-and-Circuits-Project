@@ -11,6 +11,7 @@ def extract_data(chip: 'Chip') -> list[Union[int, float]]:
     Grab iteration number, total cost, total wirecount
     and intersectioncount from chip. Return it as list.
     """
+
     data: list[Union[int, float]] = []
 
     data.append(int(chip.iteration))
@@ -27,10 +28,11 @@ def save_to_file(chip: 'Chip', output_filename: str) -> None:
     """
     Write data from list to csv-file.
     """
+
     data = extract_data(chip)
 
     # Open output file and append latest chip iteration data
-    with open(f'../output/{output_filename}/{output_filename}.csv',
+    with open(f"../output/{output_filename}/{output_filename}.csv",
               "a", newline="") as file:
         writer = csv.writer(file)
         if data[0] == 0:
