@@ -143,14 +143,15 @@ def create_lineplot(output_filename: str, alg_name: str) -> None:
     data = load_data(output_filename)
     iterations = data[0]
     costs = data[1]
-    wirecounts = data[2]
-    intersectioncounts = data[3]
+
+    maximum = max(iterations)
 
     # plot lineplot of total costs over iterations (suitable for comparing hillclimbing to simulated annealing
     plt.figure(figsize=(8,8))
     plt.plot(iterations, costs)
     plt.title(f"Total chip costs over {len(iterations)} iterations ({alg_name} Algorithm)", fontsize=15)
-    plt.xlabel("Total cost of chip configuration", fontsize=12)
-    plt.ylabel("Iterations", fontsize=12)
+    plt.xlabel("Iterations", fontsize=12)
+    plt.ylabel("Total cost of chip configuration", fontsize=12)
+    plt.text(maximum, costs[maximum], str(costs[maximum]))
     plt.savefig(f'./../output/{output_filename}/{output_filename}_lineplot.png', bbox_inches='tight', pad_inches=1, dpi=300)
     

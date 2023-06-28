@@ -94,7 +94,6 @@ class SimulatedAnnealing(HillClimber):
         # Update the first score
         self.chip.calculate_costs()
 
-
         # Writing original solved chip data to CSV file
         save_to_file(self.chip, self.output_filename)
 
