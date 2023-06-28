@@ -30,9 +30,12 @@ def save_to_file(chip: 'Chip', output_filename: str) -> None:
     data = extract_data(chip)
 
     # Open output file and append latest chip iteration data
-    with open(f'../output/{output_filename}/{output_filename}.csv', "a", newline="") as file:
+    with open(f'../output/{output_filename}/{output_filename}.csv',
+              "a", newline="") as file:
         writer = csv.writer(file)
         if data[0] == 0:
-            writer.writerow(["iteration", "cost", "wirecount", "intersectioncount", "time_per_iteration", "cumulative_time"])
+            writer.writerow(["iteration", "cost", "wirecount",
+                             "intersectioncount", "time_per_iteration",
+                             "cumulative_time"])
 
         writer.writerow(data)

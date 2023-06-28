@@ -1,15 +1,13 @@
 import time
 import sys
-sys.path.append("../analysis")
-sys.path.append("../classes")
-sys.path.append("..")
-
 import copy
 from classes.chip import Chip
 from classes.wire import Wire
 from .random_alg import lay_wire, random_reassign_wire
-
 from analysis.save import save_to_file
+sys.path.append("../analysis")
+sys.path.append("../classes")
+sys.path.append("..")
 
 
 class HillClimber:
@@ -29,7 +27,8 @@ class HillClimber:
                 self.chip.add_wire(new_wire)
                 lay_wire(new_wire, self.chip.grid)
                 # Randomly lay wires until father gate is found
-                while (new_wire.get_current_position() != new_wire.father.get_coords()):
+                while (new_wire.get_current_position() !=
+                       new_wire.father.get_coords()):
                     random_reassign_wire(new_wire, self.chip.grid)
         return (self.chip)
 
@@ -84,9 +83,10 @@ class HillClimber:
 
                         # Randomly replace the wire
                         random_reassign_wire(wire_copy, chip_copy.grid)
-                        
+
                         # Find a new valid solution
-                        while (wire_copy.get_current_position() != wire_copy.father.get_coords()):
+                        while (wire_copy.get_current_position() !=
+                               wire_copy.father.get_coords()):
                             random_reassign_wire(wire_copy, chip_copy.grid)
 
                         # Check for a better solution
@@ -102,10 +102,12 @@ class HillClimber:
                             completed_iteration_time = time.time()
 
                             # Calculate duration of iteration
-                            self.chip.iteration_duration = completed_iteration_time - start_time
+                            self.chip.iteration_duration =\
+                                completed_iteration_time - start_time
 
                             # Update cumulative iteration duration
-                            self.chip.cumulative_duration += self.chip.iteration_duration
+                            self.chip.cumulative_duration +=\
+                                self.chip.iteration_duration
 
                             # Reset timer
                             start_time = time.time()

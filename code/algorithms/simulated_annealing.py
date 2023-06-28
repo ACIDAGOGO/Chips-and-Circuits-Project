@@ -3,22 +3,23 @@ import math
 import random
 import sys
 import time
-
-sys.path.append("../analysis")
-sys.path.append("../classes")
-sys.path.append("..")
-
 from analysis.save import save_to_file
 from classes.chip import Chip
 from .hill_climber import HillClimber
 from .random_alg import random_reassign_wire
 
-random.seed(a = 1)
+sys.path.append("../analysis")
+sys.path.append("../classes")
+sys.path.append("..")
+
+
+random.seed(a=1)
 
 
 class SimulatedAnnealing(HillClimber):
 
-    def __init__(self, chip_no: int, netlist_no: int, output_filename: str, temp: int = 1000000):
+    def __init__(self, chip_no: int, netlist_no: int,
+                 output_filename: str, temp: int = 1000000):
         # Use init of hill_climber class
         super().__init__(chip_no, netlist_no, output_filename)
 
@@ -29,16 +30,16 @@ class SimulatedAnnealing(HillClimber):
 
     def cool_down(self, amount_of_tries: int):
         """
-        This function will make the temperature gradually cool down eventually becoming zero.
-        When this has become zero, the function will just run like a regular hillclimber would.
+        This function will make the temperature gradually cool.
+        When this is zero degrees, it runs just like a regular hillclimber.
         """
         self.current_temp -= (self.start_temp / amount_of_tries)
 
     def check_solution_not_perfect(self, chip_copy: "Chip"):
         """
         Checks for a better solution and updates the chip likewise.
-        Will sometimes accept a worse chip, depending on the current temperature.
-        A higher temperature will increase the chances of accepting a worse chip.
+        Sometimes accept a worse chip, depending on the current temperature.
+        Higher temperatures increase the chances of accepting a worse chip.
         """
 
         # Cost of the chip after placing a new wire
@@ -118,9 +119,10 @@ class SimulatedAnnealing(HillClimber):
 
                         # Randomly replace the wire
                         random_reassign_wire(wire_copy, chip_copy.grid)
-                        
+
                         # Find a new valid solution
-                        while (wire_copy.get_current_position() != wire_copy.father.get_coords()):
+                        while (wire_copy.get_current_position() !=
+                               wire_copy.father.get_coords()):
                             random_reassign_wire(wire_copy, chip_copy.grid)
 
                         # Check for a better solution or accept a worse one
@@ -137,10 +139,12 @@ class SimulatedAnnealing(HillClimber):
                             completed_iteration_time = time.time()
 
                             # Calculate duration of iteration
-                            self.chip.iteration_duration = completed_iteration_time - start_time
+                            self.chip.iteration_duration =\
+                                completed_iteration_time - start_time
 
                             # Update cumulative iteration duration
-                            self.chip.cumulative_duration += self.chip.iteration_duration
+                            self.chip.cumulative_duration +=\
+                                self.chip.iteration_duration
 
                             # Reset timer
                             start_time = time.time()
