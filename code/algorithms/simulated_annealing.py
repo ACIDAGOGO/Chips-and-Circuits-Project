@@ -84,6 +84,10 @@ class SimulatedAnnealing(HillClimber):
         return False
 
     def run_sim_annealing(self):
+        """
+        Runs simulated annealing algorithm.
+        """
+
         # Get one valid solution
         self.make_random_valid_solution()
 
@@ -148,4 +152,5 @@ class SimulatedAnnealing(HillClimber):
             except KeyboardInterrupt:
                 break
 
+        print(f"\nRuntime: {round(self.chip.cumulative_duration, 3)} seconds.")
         return self.chip

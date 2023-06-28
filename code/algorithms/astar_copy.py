@@ -3,7 +3,7 @@ sys.path.insert(0, "../classes")
 
 import time
 
-from typing import Optional
+from typing import Optional, Union
 import operator
 
 from classes.chip import Chip

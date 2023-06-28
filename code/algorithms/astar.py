@@ -3,7 +3,7 @@ sys.path.insert(0, "../classes")
 
 import time
 
-from typing import Optional
+from typing import Optional, Union, Any
 import operator
 
 from classes.chip import Chip
@@ -19,24 +19,24 @@ class WireSegment:
         Wire segments are used in the A* algorithm to determine the cheapest wire path possible between two points.
     """
 
-    def __init__(self, previous_segment: "WireSegment" = None, position: tuple[int, int, int] = None):
+    def __init__(self, previous_segment: Any = None, position: Any = None) -> None:
         self.previous_segment = previous_segment
         self.position = position
 
-        self.wire_cost = 0
-        self.manhattan_cost = 0
-        self.total_cost = 0
+        self.wire_cost: int = 0
+        self.manhattan_cost: int = 0
+        self.total_cost: int = 0
 
-    def get_x(self):
-        return self.position[0]
+    def get_x(self) -> int:
+        return int(self.position[0])
 
-    def get_y(self):
-        return self.position[1]
+    def get_y(self) -> int:
+        return int(self.position[1])
 
-    def get_z(self):
-        return self.position[2]
+    def get_z(self) -> int:
+        return int(self.position[2])
 
-    def __eq__(self, other):
+    def __eq__(self, other) -> Any:
         return self.position == other.position
 
     def __repr__(self) -> str:
@@ -45,21 +45,51 @@ class WireSegment:
 
 class Heuristics:
     """ Implements an easy way to apply extra heurstics to the A* algorithm. These heuristics influence which paths
+<<<<<<< HEAD
         are prioritized (seen as "cheaper") when laying wire segments by setting the cost of making certain moves
+=======
+        are prioritized (seen as "cheaper") when laying wire segments by setting the cost of making certain moves.
+>>>>>>> b9d2f376ccfa73deb73c7168ef46ddcbc121a41d
     """
 
-    def __init__(self, heuristic: str = None):
+    def __init__(self, heuristic: Optional[str] = None, sorting_mode: Optional[str] = None) -> None:
         self.heuristic = heuristic
+        self.sorting_mode = sorting_mode
 
-    def calculate_manhattan_distance(self, segment_coords: tuple[int, int, int], father_coords: tuple[int, int, int]):
-        """ Returns the manhattan distance between two points """
+    def sort_desired_connections(self, chip: "Chip") -> list[tuple["Gate", "Gate", int]]:
+        """
+        Sort mother-father connections which have to be made (currently sorts on shortest to longest manhattan distance).
+        """
 
-        manhattan_distance = abs(segment_coords[0] - father_coords[0]) + abs(segment_coords[1] - father_coords[1]) + abs(segment_coords[2] - father_coords[2])
+        connections: list[tuple["Gate", "Gate", int]] = []
+        for mother in chip.gates.values():
+            for father in mother.get_destinations():
+                manhattan_distance: int = self.calculate_manhattan_distance(mother.get_coords(), father.get_coords())
+                connections.append((mother, father, manhattan_distance))
+
+        if (self.sorting_mode == None):
+            return connections        
+
+        connections.sort(key=operator.itemgetter(2))
+
+        if (self.sorting_mode == "ascending"):
+            return connections
+        elif (self.sorting_mode == "descending"):
+            return connections[::-1]
+
+    def calculate_manhattan_distance(self, segment_coords: tuple[int, int, int], father_coords: tuple[int, int, int]) -> int:
+        """
+        Returns the manhattan distance between two points.
+        """
+
+        manhattan_distance: int = abs(segment_coords[0] - father_coords[0]) + abs(segment_coords[1] - father_coords[1]) + abs(segment_coords[2] - father_coords[2])
 
         return manhattan_distance
 
-    def default(self, chip: "Chip", current_segment: "WireSegment", next_segment: "WireSegment", father_coords: tuple[int, int, int]):
-        """ Default A*, only takes wire intersection costs into account """
+    def default(self, chip: "Chip", current_segment: "WireSegment", next_segment: "WireSegment", father_coords: tuple[int, int, int]) -> None:
+        """
+        Default A*, only takes wire intersection costs into account.
+        """
 
         # Check if position already contains a wire segment and assign wire cost
         if (chip.grid.values[next_segment.get_z()][next_segment.get_y()][next_segment.get_x()] <= -1):
@@ -70,17 +100,24 @@ class Heuristics:
             next_segment.wire_cost = current_segment.wire_cost + 1
 
         # Assign manhattan distance cost
-        manhattan_distance = self.calculate_manhattan_distance(next_segment.position, father_coords)
+        manhattan_distance: int = self.calculate_manhattan_distance(next_segment.position, father_coords)
         next_segment.manhattan_cost = manhattan_distance
 
         # Assign total cost
         next_segment.total_cost = next_segment.wire_cost + manhattan_distance
 
-    def avoid_gates(self, chip: "Chip", next_segment: "WireSegment", mother_coords: tuple[int, int, int], father_coords: tuple[int, int, int]):
-        segment_position = next_segment.position
-        grid_size = chip.grid.get_grid_size()
+    def avoid_gates(self, chip: "Chip", next_segment: "WireSegment", mother_coords: tuple[int, int, int], father_coords: tuple[int, int, int]) -> None:
+        """
+        Assigns a segment a higher cost if it is close to a gate.
+        """
+        
+        segment_position: tuple[int, int, int] = next_segment.position
+        grid_size: tuple[int, int, int] = chip.grid.get_grid_size()
 
-        avoid_distance = 1
+        # Set avoid distance
+        avoid_distance: int = 1
+
+        # Check for close gates
         for z in range(segment_position[2], segment_position[2] + avoid_distance + 1):
             for y in range(segment_position[1], segment_position[1] + avoid_distance + 1):
                 for x in range(segment_position[0], segment_position[0] + avoid_distance + 1):
@@ -88,14 +125,20 @@ class Heuristics:
                         if (chip.grid.values[z][y][x] > 0 and not (x, y, z) == mother_coords and not (x, y, z) == father_coords):
                             next_segment.wire_cost += 50
 
-    def avoid_low_layers(self, next_segment: "WireSegment"):
-        layer_costs = [7, 6, 5, 4, 3, 2, 1, 0]
-        z = next_segment.get_z()
+    def avoid_low_layers(self, next_segment: "WireSegment") -> None:
+        """
+        Assigns a segment a higher cost if its in a lower layer.
+        """
+
+        layer_costs: list[int] = [7, 6, 5, 4, 3, 2, 1, 0]
+        z: int = next_segment.get_z()
 
         next_segment.wire_cost += layer_costs[z]
 
-    def assign_next_segment_costs(self, chip: "Chip", current_segment: "WireSegment", next_segment: "WireSegment", mother_coords: tuple[int, int, int], father_coords: tuple[int, int, int]):
-        """ Determines and assigns the cost of using a wire segment to the object """
+    def assign_next_segment_costs(self, chip: "Chip", current_segment: "WireSegment", next_segment: "WireSegment", mother_coords: tuple[int, int, int], father_coords: tuple[int, int, int]) -> None:
+        """
+        Determines and assigns the cost of using a wire segment to the object.
+        """
 
         # Apply different costs based on chosen heuristic
         self.default(chip, current_segment, next_segment, father_coords)
@@ -116,32 +159,38 @@ class AstarAlg:
         AstarAlg is initialized with a chip numbr, netlist number and filename to output to.
     """
 
-    def __init__(self, chip_no: int, netlist_no: int, output_filename: str, heuristic: str):
-        self.chip = Chip(chip_no, f"netlist_{netlist_no}.csv")
+    def __init__(self, chip_no: int, netlist_no: int, output_filename: str, sorting_mode: str, heuristic: str) -> None:
+        self.chip: "Chip" = Chip(chip_no, f"netlist_{netlist_no}.csv")
+        self.heuristic: "Heuristics" = Heuristics(heuristic, sorting_mode)
         self.output_filename = output_filename
-        self.heuristic = Heuristics(heuristic)
         self.run()
 
     def create_parent_segments(self, mother_coords: tuple[int, int, int], father_coords: tuple[int, int, int]) -> tuple["WireSegment", "WireSegment"]:
-        """ Returns the origin and destination segment of a wire """
+        """
+        Returns the origin and destination segment of a wire.
+        """
 
-        mother_segment = WireSegment(None, mother_coords)
-        father_segment = WireSegment(None, father_coords)
+        mother_segment: "WireSegment" = WireSegment(None, mother_coords)
+        father_segment: "WireSegment" = WireSegment(None, father_coords)
 
         return mother_segment, father_segment
 
     def update_grid(self, wire_path: list[tuple[int, int, int]]) -> None:
-        """ Updates the grid (3D array) if a coordinate contains a wire """
+        """
+        Updates the grid (3D array) if a coordinate contains a wire.
+        """
 
         for coordinate in wire_path[1:-1]:
             self.chip.grid.values[coordinate[2]][coordinate[1]][coordinate[0]] -= 1
 
-    def check_if_wire_completed(self, current_segment: "WireSegment", father_segment: "WireSegment") -> tuple[bool, Optional[list[tuple[int, int, int]]]]:
-        """ Determines if a wire had reached its destination and if so retuns its path"""
+    def check_if_wire_completed(self, current_segment: "WireSegment", father_segment: "WireSegment") -> Union[bool, tuple[bool, list[tuple[int, int, int]]]]:
+        """
+        Determines if a wire had reached its destination and if so retuns its path.
+        """
 
-        wire_path = []
+        wire_path: list[tuple[int, int, int]] = []
         if current_segment == father_segment:
-            segment = current_segment
+            segment: "WireSegment" = current_segment
 
             # Create path
             while segment is not None:
@@ -156,28 +205,32 @@ class AstarAlg:
             return False, None
 
     def get_all_directions(self, current_segment: "WireSegment") -> list[tuple[int, int, int]]:
-        """ Retuns all possible directions in the grid from a wire segments' position"""
+        """
+        Retuns all possible directions in the grid from a wire segments' position.
+        """
 
-        x = current_segment.get_x()
-        y = current_segment.get_y()
-        z = current_segment.get_z()
+        x: int = current_segment.get_x()
+        y: int = current_segment.get_y()
+        z: int = current_segment.get_z()
 
         directions = [(x + 1, y, z), (x - 1, y, z), (x, y + 1, z), (x, y - 1, z), (x, y, z + 1), (x, y, z - 1)]
 
         return directions
 
     def get_possible_directions(self, current_segment: "WireSegment", father_coords: tuple[int, int, int]) -> list[tuple[int, int, int]]:
-        """ Returns all possible directions in the grid from a wire segemnt's position """
+        """
+        Returns all possible directions in the grid from a wire segemnt's position.
+        """
 
-        possible_directions = []
+        possible_directions: list[tuple[int, int, int]] = []
 
         # Get all directions
-        directions = self.get_all_directions(current_segment)
+        directions: list[tuple[int, int, int]] = self.get_all_directions(current_segment)
 
         # Iterate through all directions
         for direction in directions:
             # Get grid bounds
-            grid_upperbounds = self.chip.grid.get_grid_size()
+            grid_upperbounds: tuple[int, int, int] = self.chip.grid.get_grid_size()
 
             # Check if this direction is outside the grid, proceed if not
             if direction[0] > grid_upperbounds[0] or direction[1] > grid_upperbounds[1] or direction[2] > grid_upperbounds[2] or direction[0] < 0 or direction[1] < 0 or direction[2] < 0:
@@ -193,59 +246,40 @@ class AstarAlg:
         return possible_directions
 
     def create_next_segments(self, current_segment: "WireSegment", father_coords: tuple[int, int, int]) -> list["WireSegment"]:
-        """ Create and return a wire segment for each possible direction from the current wire segment """
+        """
+        Create and return a wire segment for each possible direction from the current wire segment.
+        """
 
-        next_segments = []
+        next_segments: list["WireSegment"] = []
 
         # Get possible directions
-        possible_directions = self.get_possible_directions(current_segment, father_coords)
+        possible_directions: list[tuple[int, int, int]] = self.get_possible_directions(current_segment, father_coords)
 
         # Iterate through possible directions
         for direction in possible_directions:
-            next_segment_position = direction
+            next_segment_position: tuple[int, int, int] = direction
 
             # Create new wire segment
-            new_segment = WireSegment(current_segment, next_segment_position)
+            new_segment: "WireSegment" = WireSegment(current_segment, next_segment_position)
 
             # Append new segment to list
             next_segments.append(new_segment)
 
         return next_segments
 
-    # def calculate_manhattan_distance(self, segment_coords: tuple[int, int, int], father_coords: tuple[int, int, int]):
-    #     """ Returns the manhattan distance between two points """
-
-    #     manhattan_distance = abs(segment_coords[0] - father_coords[0]) + abs(segment_coords[1] - father_coords[1]) + abs(segment_coords[2] - father_coords[2])
-
-    #     return manhattan_distance
-
-    # def assign_next_segment_costs(self, next_segment: "WireSegment", father_coords: tuple[int, int, int]):
-    #     """ Determines and assigns the cost of using a wire segment to the object """
-
-    #     # Check if position already contains a wire segment and assign wire cost
-    #     if (self.chip.grid.values[next_segment.get_z()][next_segment.get_y()][next_segment.get_x()] <= -1):
-    #         next_segment.wire_cost += 300
-    #     else:
-    #         next_segment.wire_cost += 1
-
-    #     # Assign manhattan distance cost
-    #     manhattan_distance = self.calculate_manhattan_distance(next_segment.position, father_coords)
-    #     next_segment.manhattan_cost = manhattan_distance
-
-    #     # Assign total cost
-    #     next_segment.total_cost = next_segment.wire_cost + manhattan_distance
-
-    def draw_wire(self, mother: "Gate", father: "Gate"):
-        """ Determines the shortest path between two points and draws the wire """
+    def draw_wire(self, mother: "Gate", father: "Gate") -> list[tuple[int, int, int]]:
+        """
+        Determines the shortest path between two points and draws the wire.
+        """
 
         # Create lists which keep track of checked and not-checked possible segments
-        open_list = []
-        closed_list = []
-        next_segments = []
+        open_list: list["WireSegment"] = []
+        closed_list: list["WireSegment"] = []
+        next_segments: list["WireSegment"] = []
 
         # Initialize mother and father segments
-        mother_coords = mother.get_coords()
-        father_coords = father.get_coords()
+        mother_coords: tuple[int, int, int] = mother.get_coords()
+        father_coords: tuple[int, int, int] = father.get_coords()
         mother_segment, father_segment = self.create_parent_segments(mother_coords, father_coords)
 
         # Initialize open list with mother segment
@@ -254,24 +288,14 @@ class AstarAlg:
         # Repeat while there open paths
         while len(open_list) > 0:
             # Sort open list on segment cost
-            open_list.sort(key=lambda x: x.total_cost, reverse = True)
+            open_list.sort(key=lambda x: x.total_cost, reverse=True)
 
             # Set the current segment to the lowest sum segment
-            current_segment = open_list[len(open_list) - 1]
+            current_segment: "WireSegment" = open_list[len(open_list) - 1]
 
             # Add current lowest value (current) segment to closed list
             open_list.pop()
             closed_list.append(current_segment)
-
-            # current_segment = open_list[0]
-            # current_index = 0
-            # for index, item in enumerate(open_list):
-            #     if item.total_cost < current_segment.total_cost:
-            #         current_segment = item
-            #         current_index = index
-
-            # open_list.pop(current_index)
-            # closed_list.append(current_segment)
 
             # Check if father is reached
             completed, wire_path = self.check_if_wire_completed(current_segment, father_segment)
@@ -283,7 +307,7 @@ class AstarAlg:
 
             # Loop through possible next segments to see if they are valid and better
             for segment in next_segments:
-                go_next = False
+                go_next: bool = False
 
                 # Skip segment if it has already been passed
                 for closed_segment in closed_list:
@@ -314,41 +338,30 @@ class AstarAlg:
         print("Can't lay wire")
         sys.exit(1)
 
-    def sort_desired_connections(self):
-        """ Sort mother-father connections which have to be made (currently sorts on shortest to longest manhattan distance) """
-
-        connections: list[tuple["Gate", "Gate", int]] = []
-        for mother in self.chip.gates.values():
-            for father in mother.get_destinations():
-                manhattan_distance = self.heuristic.calculate_manhattan_distance(mother.get_coords(), father.get_coords())
-                connections.append((mother, father, manhattan_distance))
-
-        connections.sort(key=operator.itemgetter(2))
-
-        return connections[::-1]
-
-    def run(self):
-        """ Lay all wires and return chip """
+    def run(self) -> None:
+        """
+        Lay all wires and return chip.
+        """
 
         # Start timer
         start_time: float = time.time()
 
         # Get sorted connections
-        sorted_connections = self.sort_desired_connections()
+        sorted_connections: list[tuple["Gate", "Gate", int]] = self.heuristic.sort_desired_connections(self.chip)
 
         # Draw and add all wires to chip
-        wires_drawn = 1
+        wires_drawn: int = 1
         for connection in sorted_connections:
-            mother = connection[0]
-            father = connection[1]
+            mother: "Gate" = connection[0]
+            father: "Gate" = connection[1]
 
             # Draw wire and get path
             print(f"Drawing wire {wires_drawn}")
-            wire_path = self.draw_wire(mother, father)
+            wire_path: list[tuple[int, int, int]] = self.draw_wire(mother, father)
             wires_drawn += 1
 
             # Create new wire object
-            new_wire = Wire(mother, father)
+            new_wire: "Wire" = Wire(mother, father)
             new_wire.pop_unit()
 
             # Add found path to wire object
@@ -359,8 +372,8 @@ class AstarAlg:
             self.chip.add_wire(new_wire)
 
         # Determine duration of algorithm
-        total_time = time.time() - start_time
-        print(total_time)
+        total_time: float = time.time() - start_time
+        print(f"Runtime: {round(total_time, 2)} seconds.")
 
         # Assing duration to chip
         self.chip.iteration_duration = total_time

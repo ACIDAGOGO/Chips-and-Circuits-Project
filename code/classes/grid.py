@@ -4,6 +4,9 @@ import matplotlib.pyplot as plt  # type: ignore
 from typing import Any
 
 class Grid:
+    """
+    Class used to create a grid for storing wire and gate locations in 3D space.
+    """
     def __init__(self, chip_no: int) -> None:
         self.chip_no = chip_no
 
@@ -25,14 +28,14 @@ class Grid:
 
     def get_grid_size(self) -> tuple[int, int, int]:
        """
-        Returns the size of the grid in a tuple
+       Returns the size of the grid in a tuple.
        """
        return (self.grid_x, self.grid_y, self.grid_z)
 
     
     def initialize_grid(self) -> Any:
         """
-        Create grid in 3d array
+        Create grid in 3d array.
         """
 
         # Creates grid with zeros with aspect ratio self.x, self.y
@@ -42,7 +45,7 @@ class Grid:
 
     def check_for_illegal_gate(self, position: tuple[int, int, int], father: 'Gate') -> bool:
         """
-        checks for a foreign, illegal gate
+        Checks for a foreign, illegal gate.
         """
         if self.values[position[2]][position[1]][position[0]] == father.get_id():
             return False

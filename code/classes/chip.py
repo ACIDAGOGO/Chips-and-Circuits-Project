@@ -9,10 +9,6 @@ class Chip:
     Class used to represent a computer chip.
     """
     def __init__(self, chip_no: int, netlist_name: str):
-        """
-        Create a chip object with chip number, netlist name, grid object,
-        gate objects and wire objects.
-        """
         self.chip_no = chip_no
         self.netlist_name = netlist_name
         self.grid = Grid(chip_no)

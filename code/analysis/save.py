@@ -25,7 +25,7 @@ def extract_data(chip: 'Chip') -> list[Union[int, float]]:
 
 def save_to_file(chip: 'Chip', output_filename: str) -> None:
     """
-    Write data from list to csv file.
+    Write data from list to csv-file.
     """
     data = extract_data(chip)
 
