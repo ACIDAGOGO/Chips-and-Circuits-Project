@@ -89,7 +89,7 @@ if __name__ == "__main__":
         print("Started Simulated Annealing\nPress 'ctrl+C' to end run")
 
         # Run Simulated Annealing algorithm
-        sim_annealing = sa(chip_number, netlist_number, output_filename, temp= 100000)
+        sim_annealing = sa(chip_number, netlist_number, output_filename, temp= 1000000)
         sim_annealing.run_sim_annealing()
         create_lineplot(output_filename, "Simulated Annealing")
 
