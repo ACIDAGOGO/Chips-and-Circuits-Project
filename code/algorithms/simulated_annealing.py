@@ -22,7 +22,7 @@ class SimulatedAnnealing(HillClimber):
     """
 
     def __init__(self, chip_no: int, netlist_no: int,
-                 output_filename: str, temp: int = 1000000):
+                 output_filename: str, temp: int = 3000000):
         # Use init of hill_climber class
         super().__init__(chip_no, netlist_no, output_filename)
 
@@ -114,6 +114,8 @@ class SimulatedAnnealing(HillClimber):
 
                     # Try and improve the wire a thousand times
                     for _ in range(1000):
+                        # Update algorithm iteration number
+                        iteration += 1
 
                         # Copy the original chip
                         chip_copy = copy.deepcopy(self.chip)
@@ -131,9 +133,6 @@ class SimulatedAnnealing(HillClimber):
 
                         # Check for a better solution or accept a worse one
                         if (self.check_solution_not_perfect(chip_copy)):
-                            # Update algorithm iteration number
-                            iteration += 1
-
                             # Update chip iteration number
                             self.chip.iteration = iteration
 

@@ -103,6 +103,10 @@ def create_lineplot(output_filename: str, alg_name: str) -> None:
 
     maximum = max(iterations)
 
+    for index, value in enumerate(iterations):
+        if value == maximum:
+            cost = costs[index]
+
     # Plot lineplot of total costs over iterations
     plt.figure(figsize=(8, 8))
     plt.plot(iterations, costs)
@@ -110,6 +114,6 @@ def create_lineplot(output_filename: str, alg_name: str) -> None:
                f" iterations ({alg_name} Algorithm)", fontsize=15)
     plt.xlabel("Iterations", fontsize=12)
     plt.ylabel("Total cost of chip configuration", fontsize=12)
-    plt.text(maximum, costs[maximum], str(costs[maximum]))
+    plt.text(maximum, cost, str(cost))
     plt.savefig(f"./../output/{output_filename}/{output_filename}_lineplot.png",
                 bbox_inches='tight', pad_inches=1, dpi=300)

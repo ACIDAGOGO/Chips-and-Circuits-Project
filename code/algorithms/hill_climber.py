@@ -72,9 +72,10 @@ class HillClimber:
             try:
                 # Go through all the wires
                 for wire in range(len(self.chip.wires)):
-
                     # Try and improve the wire a thousand times
                     for _ in range(1000):
+                        # Update algorithm iteration number
+                        iteration += 1
 
                         # Copy the original chip
                         chip_copy = copy.deepcopy(self.chip)
@@ -92,10 +93,6 @@ class HillClimber:
 
                         # Check for a better solution
                         if (self.check_score(chip_copy)):
-
-                            # Update algorithm iteration number
-                            iteration += 1
-
                             # Update chip iteration number
                             self.chip.iteration = iteration
 
