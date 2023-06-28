@@ -20,6 +20,7 @@ def is_move_valid(wire: 'Wire', grid: 'Grid',
     """
     Checks if a given move is a valid move.
     """
+
     global counter
     global tries_counter
 
@@ -57,6 +58,7 @@ def get_random_direction(wire: 'Wire') -> tuple[int, int, int]:
     """
     Defines a random direction for a wire to base its next move on.
     """
+
     current_position = wire.get_current_position()
     current_position_x = current_position[0]
     current_position_y = current_position[1]
@@ -79,10 +81,11 @@ def lay_wire(wire: 'Wire', grid: 'Grid') -> None:
     """
     Inserts wires into the 3D grid.
     """
+
     global counter
     counter = 0
 
-    while (counter <= max_tries and wire.check_for_father() == False):
+    while (counter <= max_tries and not wire.check_for_father()):
         random_direction = get_random_direction(wire)
         if (is_move_valid(wire, grid, random_direction)):
             wire.add_unit(random_direction)
@@ -93,8 +96,9 @@ def lay_wire(wire: 'Wire', grid: 'Grid') -> None:
 
 def random_reassign_wire(new_wire: "Wire", grid: "Grid"):
     """
-    Removes a wire and created a new one.
+    Removes a wire and create a new one.
     """
+
     # Trace back wire and remove
     for unit in range(len(new_wire.get_path()) - 1):
         coords = new_wire.pop_unit()
@@ -112,6 +116,7 @@ def run_random(chip_no: int, netlist_no: int, output_filename: str) -> 'Chip':
     """
     Runs random algorithm.
     """
+    
     iteration = 0
     cumulative_duration: float = 0.0
 
