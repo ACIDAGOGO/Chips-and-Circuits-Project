@@ -93,7 +93,8 @@ if __name__ == "__main__":
         # Run Simulated Annealing algorithm
         sim_annealing = sa(chip_number, netlist_number, output_filename,
                            temp=100000)
-        sim_annealing.run_sim_annealing()
+        chip = sim_annealing.run_sim_annealing()
+        visualise(chip, algorithm, output_filename)
         create_lineplot(output_filename, "Simulated Annealing")
 
         print(endmessage)
