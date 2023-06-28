@@ -1,5 +1,6 @@
 from .gate import Gate
 
+
 class Wire:
     """
     Class used to represent a wire on a computer chip.
@@ -21,7 +22,7 @@ class Wire:
 
     def get_path(self) -> list[tuple[int, int, int]]:
         return self.path
-    
+
     def get_current_position(self) -> tuple[int, int, int]:
         wire_length = len(self.path)
         return self.path[wire_length - 1]
@@ -31,12 +32,11 @@ class Wire:
 
         if (wire_length > 1):
             return self.path[wire_length - 2]
-        
+
         return self.get_current_position()
-    
+
     def check_for_father(self) -> bool:
         if self.get_current_position() == self.father.get_coords():
             return True
-        
-        return False
 
+        return False

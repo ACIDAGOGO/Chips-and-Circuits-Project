@@ -17,7 +17,7 @@ class Gate:
 
     def get_y(self) -> int:
         return self.y
-    
+
     def get_z(self) -> int:
         return self.z
 

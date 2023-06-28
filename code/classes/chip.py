@@ -31,7 +31,8 @@ class Chip:
         Load gate id's into 3d numpy array.
         """
         for gate in self.gates.values():
-            self.grid.values[gate.get_z(), gate.get_y(), gate.get_x()] = gate.get_id()
+            self.grid.values[gate.get_z(), gate.get_y(), gate.get_x()]\
+                             = gate.get_id()
 
     def load_gates(self, filename: str) -> None:
         """
@@ -99,7 +100,8 @@ class Chip:
                         self.wirecount += abs(value)
                         cost += (abs(value) + (300 * intersections))
 
-        # Add 1 per wire, because in the grid, a wire on top of a father gate is not represented
+        # Add 1 per wire, because in the grid,
+        # a wire on top of a father gate is not represented
         cost += len(self.wires)
         self.wirecount += len(self.wires)
 

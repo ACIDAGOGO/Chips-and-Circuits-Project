@@ -1,7 +1,7 @@
 from .gate import Gate
 import numpy as np
-import matplotlib.pyplot as plt  # type: ignore
 from typing import Any
+
 
 class Grid:
     """
@@ -25,14 +25,12 @@ class Grid:
 
         self.values = self.initialize_grid()
 
-
     def get_grid_size(self) -> tuple[int, int, int]:
-       """
-       Returns the size of the grid in a tuple.
-       """
-       return (self.grid_x, self.grid_y, self.grid_z)
+        """
+        Returns the size of the grid in a tuple.
+        """
+        return (self.grid_x, self.grid_y, self.grid_z)
 
-    
     def initialize_grid(self) -> Any:
         """
         Create grid in 3d array.
@@ -43,7 +41,8 @@ class Grid:
 
         return grid
 
-    def check_for_illegal_gate(self, position: tuple[int, int, int], father: 'Gate') -> bool:
+    def check_for_illegal_gate(self, position: tuple[int, int, int],
+                               father: 'Gate') -> bool:
         """
         Checks for a foreign, illegal gate.
         """
@@ -51,5 +50,5 @@ class Grid:
             return False
         elif self.values[position[2]][position[1]][position[0]] > 0:
             return True
-        
+
         return False
