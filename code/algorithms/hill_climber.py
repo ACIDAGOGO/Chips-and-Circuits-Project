@@ -4,6 +4,7 @@ import copy
 from classes.chip import Chip
 from classes.wire import Wire
 from .random_alg import lay_wire, random_reassign_wire
+from .astar import AstarAlg
 from analysis.save import save_to_file
 sys.path.append("../analysis")
 sys.path.append("../classes")
@@ -16,22 +17,30 @@ class HillClimber:
         self.costs: int
         self.output_filename: str = output_filename
 
+        self.chip_no = chip_no
+        self.netlist_no = netlist_no
+
     def make_random_valid_solution(self) -> 'Chip':
         """
         Create one randomly solved chip for hill_climber to improve upon.
         """
         
         # Create the wires
-        for mother in self.chip.gates.values():
-            for father in mother.get_destinations():
-                new_wire = Wire(mother, father)
-                self.chip.add_wire(new_wire)
-                lay_wire(new_wire, self.chip.grid)
-                # Randomly lay wires until father gate is found
-                while (new_wire.get_current_position() !=
-                       new_wire.father.get_coords()):
-                    random_reassign_wire(new_wire, self.chip.grid)
-        return (self.chip)
+        # for mother in self.chip.gates.values():
+        #     for father in mother.get_destinations():
+        #         new_wire = Wire(mother, father)
+        #         self.chip.add_wire(new_wire)
+        #         lay_wire(new_wire, self.chip.grid)
+        #         # Randomly lay wires until father gate is found
+        #         while (new_wire.get_current_position() !=
+        #                new_wire.father.get_coords()):
+        #             random_reassign_wire(new_wire, self.chip.grid)
+        # return (self.chip)
+
+        astar = AstarAlg(self.chip_no, self.netlist_no, self.output_filename, "ascending", "all")
+        self.chip = astar.chip
+    
+
 
     def check_score(self, chip_copy: "Chip") -> bool:
         """
