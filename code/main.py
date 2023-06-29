@@ -103,7 +103,7 @@ if __name__ == "__main__":
 
         # Run A* algorithm
         astar = AstarAlg(chip_number, netlist_number, output_filename,
-                         sorting_mode, "all")
+                         sorting_mode, heuristic)
         chip = astar.chip
         algorithm_name = f"{algorithm} - Sort: {sorting_mode}"\
                           f" - Heuristic: {heuristic}"
